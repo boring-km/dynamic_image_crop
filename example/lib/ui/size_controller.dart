@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class CirclePointPainter extends CustomPainter {
-  CirclePointPainter(this.rect);
+class SizeController extends CustomPainter {
+  SizeController(this.rect);
 
   final Rect rect;
 
