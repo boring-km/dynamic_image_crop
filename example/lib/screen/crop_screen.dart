@@ -11,7 +11,9 @@ import 'package:image_size_getter/image_size_getter.dart' as isg;
 import 'dart:ui' as ui;
 
 class CropScreen extends StatefulWidget {
-  const CropScreen({Key? key}) : super(key: key);
+  const CropScreen(this.resultFile, {Key? key}) : super(key: key);
+
+  final File resultFile;
 
   @override
   State<CropScreen> createState() => _CropScreenState();
@@ -19,7 +21,7 @@ class CropScreen extends StatefulWidget {
 
 class _CropScreenState extends State<CropScreen> {
   ShapeType shapeType = ShapeType.rectangle;
-  File? imageFile;
+  late File imageFile;
   isg.Size? imageSize;
 
   final painterWidth = 900.0; // painter 가로 길이를 fix
@@ -39,23 +41,17 @@ class _CropScreenState extends State<CropScreen> {
   }
 
   void getImageFrom(ImageSource imageSource) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ImagePicker().pickImage(source: imageSource).then((file) {
-        if (file != null) {
-          imageFile = File(file.path);
-          if (imageFile != null && imageFile!.existsSync()) {
-            imageSize = isg.ImageSizeGetter.getSize(FileInput(imageFile!));
-            imageFile!.readAsBytes().then((imageBytes) {
-              loadImage(imageBytes, imageSize!, painterWidth).then((result) {
-                setState(() {
-                  uiImage = result;
-                });
-              });
-            });
-          }
-        }
+    imageFile = widget.resultFile;
+    if (imageFile.existsSync()) {
+      imageSize = isg.ImageSizeGetter.getSize(FileInput(imageFile));
+      imageFile.readAsBytes().then((imageBytes) {
+        loadImage(imageBytes, imageSize!, painterWidth).then((result) {
+          setState(() {
+            uiImage = result;
+          });
+        });
       });
-    });
+    }
   }
 
   @override

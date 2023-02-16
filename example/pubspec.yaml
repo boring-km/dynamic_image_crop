@@ -17,6 +17,9 @@ dependencies:
 
   image_picker: ^0.8.5+3
   image_size_getter: ^2.1.2
+  camera: ^0.10.3
+  path_provider: 
+
 
 dev_dependencies:
   flutter_test:
@@ -27,3 +30,8 @@ dev_dependencies:
 flutter:
 
   uses-material-design: true
+
+  assets:
+    - images/
+    - images/2.0x/
+    - images/3.0x/
