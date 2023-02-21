@@ -18,7 +18,8 @@ dependencies:
   image_picker: ^0.8.5+3
   image_size_getter: ^2.1.2
   camera: ^0.10.3
-  path_provider: 
+  path_provider:
+  image_crop: ^0.4.1
 
 
 dev_dependencies:
@@ -26,6 +27,12 @@ dev_dependencies:
     sdk: flutter
 
   flutter_lints: ^2.0.0
+  build_runner:
+  flutter_gen_runner:
+
+flutter_gen:
+  output: lib/gen/ # Optional (default: lib/gen/)
+  line_length: 80 # Optional (default: 80)
 
 flutter:
 
@@ -33,5 +40,3 @@ flutter:
 
   assets:
     - images/
-    - images/2.0x/
-    - images/3.0x/

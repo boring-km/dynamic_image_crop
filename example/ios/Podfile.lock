@@ -1,0 +1,47 @@
+PODS:
+  - camera_avfoundation (0.0.1):
+    - Flutter
+  - dynamic_image_crop (0.0.1):
+    - Flutter
+  - Flutter (1.0.0)
+  - image_crop (0.0.1):
+    - Flutter
+  - image_picker_ios (0.0.1):
+    - Flutter
+  - path_provider_foundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
+
+DEPENDENCIES:
+  - camera_avfoundation (from `.symlinks/plugins/camera_avfoundation/ios`)
+  - dynamic_image_crop (from `.symlinks/plugins/dynamic_image_crop/ios`)
+  - Flutter (from `Flutter`)
+  - image_crop (from `.symlinks/plugins/image_crop/ios`)
+  - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
+  - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/ios`)
+
+EXTERNAL SOURCES:
+  camera_avfoundation:
+    :path: ".symlinks/plugins/camera_avfoundation/ios"
+  dynamic_image_crop:
+    :path: ".symlinks/plugins/dynamic_image_crop/ios"
+  Flutter:
+    :path: Flutter
+  image_crop:
+    :path: ".symlinks/plugins/image_crop/ios"
+  image_picker_ios:
+    :path: ".symlinks/plugins/image_picker_ios/ios"
+  path_provider_foundation:
+    :path: ".symlinks/plugins/path_provider_foundation/ios"
+
+SPEC CHECKSUMS:
+  camera_avfoundation: 07c77549ea54ad95d8581be86617c094a46280d9
+  dynamic_image_crop: 295f8e6871085c803109eb152bf35c273ed0c5ef
+  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  image_crop: e0a67085d3ebf3cf46ca46d61c53a082507b0bc3
+  image_picker_ios: b786a5dcf033a8336a657191401bfdf12017dabb
+  path_provider_foundation: 37748e03f12783f9de2cb2c4eadfaa25fe6d4852
+
+PODFILE CHECKSUM: ef19549a9bc3046e7bb7d2fab4d021637c0c58a3
+
+COCOAPODS: 1.11.3

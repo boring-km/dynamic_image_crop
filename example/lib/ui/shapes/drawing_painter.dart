@@ -1,15 +1,21 @@
+import 'package:dynamic_image_crop_example/const/colors.dart';
 import 'package:flutter/material.dart';
+import 'dart:ui' as ui;
 
 class DrawingPainter extends CustomPainter {
-  DrawingPainter(this.points, this.first);
+  DrawingPainter(this.points, this.first, this.image);
 
   final List<Offset?> points;
   final Offset? first;
+  final ui.Image image;
 
   @override
   void paint(Canvas canvas, Size size) {
+
+    canvas.drawImage(image, const Offset(0, 0), Paint());
+
     final paint = Paint()
-      ..color = Colors.black
+      ..color = guideColor
       ..strokeWidth = 2
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.stroke;

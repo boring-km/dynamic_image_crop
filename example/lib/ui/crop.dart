@@ -1,8 +1,9 @@
 import 'dart:io';
 import 'dart:math';
+import 'dart:typed_data';
 import 'dart:ui' as ui;
 
-import 'package:dynamic_image_crop/crop_painter.dart';
+import 'package:dynamic_image_crop_example/ui/crop_painter.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -15,14 +16,6 @@ const _kCropHandleHitSize = 48.0;
 const _kCropMinFraction = 0.1;
 
 class MyCrop extends StatefulWidget {
-  const MyCrop({
-    super.key,
-    required this.image,
-    this.aspectRatio,
-    this.maximumScale = 2.0,
-    this.alwaysShowGrid = false,
-    this.onImageError,
-  });
 
   MyCrop.file(
     File file, {
@@ -53,7 +46,7 @@ class MyCropState extends State<MyCrop> with TickerProviderStateMixin, Drag {
   late final AnimationController _activeController;
   late final AnimationController _settleController;
 
-  double _scale = 0.5;
+  double _scale = 1;
   double _ratio = 1;
   Rect _view = Rect.zero;
   Rect _area = Rect.zero;
@@ -125,8 +118,8 @@ class MyCropState extends State<MyCrop> with TickerProviderStateMixin, Drag {
       _area = _calculateDefaultArea(
         viewWidth: _view.width,
         viewHeight: _view.height,
-        imageWidth: _image!.width,
-        imageHeight: _image!.height,
+        imageWidth: _image?.width,
+        imageHeight: _image?.height,
       );
     }
     if (widget.alwaysShowGrid != oldWidget.alwaysShowGrid) {
@@ -156,28 +149,26 @@ class MyCropState extends State<MyCrop> with TickerProviderStateMixin, Drag {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return ConstrainedBox(
-      constraints: const BoxConstraints.expand(),
-      child: GestureDetector(
-        key: _surfaceKey,
-        behavior: HitTestBehavior.opaque,
-        onScaleStart: _isEnabled ? _handleScaleStart : null,
-        onScaleUpdate: _isEnabled ? _handleScaleUpdate : null,
-        onScaleEnd: _isEnabled ? _handleScaleEnd : null,
-        child: CustomPaint(
-          painter: MyCropPainter(
-            image: _image,
-            ratio: _ratio,
-            view: _view,
-            area: _area,
-            scale: _scale,
-            active: _activeController.value,
+  Widget build(BuildContext context) => ConstrainedBox(
+        constraints: const BoxConstraints.expand(),
+        child: GestureDetector(
+          key: _surfaceKey,
+          behavior: HitTestBehavior.opaque,
+          onScaleStart: _isEnabled ? _handleScaleStart : null,
+          onScaleUpdate: _isEnabled ? _handleScaleUpdate : null,
+          onScaleEnd: _isEnabled ? _handleScaleEnd : null,
+          child: CustomPaint(
+            painter: MyCropPainter(
+              image: _image,
+              ratio: _ratio,
+              view: _view,
+              area: _area,
+              scale: _scale,
+              active: _activeController.value,
+            ),
           ),
         ),
-      ),
-    );
-  }
+      );
 
   void _activate() {
     _activeController.animateTo(

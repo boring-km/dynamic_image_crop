@@ -1,7 +1,6 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'dart:ui' as ui;
-import 'package:dynamic_image_crop_example/screen/result_screen.dart';
 import 'package:dynamic_image_crop_example/ui/shapes/circle_painter.dart';
 import 'package:dynamic_image_crop_example/ui/shapes/rectangle_painter.dart';
 import 'package:dynamic_image_crop_example/ui/shapes/shape_type.dart';
@@ -16,7 +15,9 @@ class DynamicCropPainter extends StatefulWidget {
     required this.painterHeight,
     required this.uiImage,
     required this.shapeType,
-    this.movingDotSize = 30,
+    required this.topMargin,
+    required this.startMargin,
+    this.movingDotSize = 8,
     required this.cropCallback,
   });
 
@@ -25,14 +26,16 @@ class DynamicCropPainter extends StatefulWidget {
   final double movingDotSize;
   final ShapeType shapeType;
   final ui.Image uiImage;
+  final double topMargin;
+  final double startMargin;
   final void Function(double x, double y, double width, double height)
       cropCallback;
 
   @override
-  State<DynamicCropPainter> createState() => _DynamicCropPainterState();
+  State<DynamicCropPainter> createState() => DynamicCropPainterState();
 }
 
-class _DynamicCropPainterState extends State<DynamicCropPainter> {
+class DynamicCropPainterState extends State<DynamicCropPainter> {
   var xPos = 0.0;
   var yPos = 0.0;
   double shapeWidth = 200.0;
@@ -57,147 +60,79 @@ class _DynamicCropPainterState extends State<DynamicCropPainter> {
   Widget build(BuildContext context) {
     shapeType = widget.shapeType;
 
-    return Row(
-      children: [
-        SizedBox(
-          width: widget.painterWidth,
-          height: widget.painterHeight,
-          child: Stack(
-            children: [
-              GestureDetector(
-                onPanStart: (details) => setPointDragState(details, context),
-                onPanEnd: (details) => resetDragState(),
-                onPanUpdate: (details) => setShapeMovement(details),
-                onTapDown: (details) {
-                  print(
-                      'dx: ${details.globalPosition.dx - 140}, dy: ${details.globalPosition.dy}');
-                  print('shape dx: $xPos, dy: $yPos');
-                },
-                child: Builder(builder: (context) {
-                  widget.cropCallback(xPos, yPos, shapeWidth, shapeHeight);
-                  if (shapeType == ShapeType.rectangle) {
-                    return CustomPaint(
-                      painter: RectanglePainter(
-                        Rect.fromLTWH(
-                          xPos + radius,
-                          yPos + radius,
-                          shapeWidth,
-                          shapeHeight,
-                        ),
-                        widget.uiImage,
-                      ),
-                      child: Container(),
-                    );
-                  } else if (shapeType == ShapeType.circle) {
-                    return CustomPaint(
-                      painter: CirclePainter(
-                        Rect.fromLTWH(
-                          xPos + radius,
-                          yPos + radius,
-                          shapeWidth,
-                          shapeHeight,
-                        ),
-                        widget.uiImage,
-                      ),
-                      child: Container(),
-                    );
-                  } else if (shapeType == ShapeType.triangle) {
-                    return CustomPaint(
-                      painter: TrianglePainter(
-                        Rect.fromLTWH(
-                          xPos + radius,
-                          yPos + radius,
-                          shapeWidth,
-                          shapeHeight,
-                        ),
-                        widget.uiImage,
-                      ),
-                      child: Container(),
-                    );
-                  } else {
-                    return Container();
-                  }
-                }),
-              ),
-              // on point 1,3,7,9
-              MovePoint(xPos, yPos),
-              MovePoint(xPos + shapeWidth, yPos),
-              MovePoint(xPos, yPos + shapeHeight),
-              MovePoint(xPos + shapeWidth, yPos + shapeHeight),
-              // on line 2,4,6,8
-              MovePoint(xPos + shapeWidth / 2, yPos),
-              MovePoint(xPos + shapeWidth / 2, yPos + shapeHeight),
-              MovePoint(xPos, yPos + shapeHeight / 2),
-              MovePoint(xPos + shapeWidth, yPos + shapeHeight / 2),
-            ],
-          ),
-        ),
-        Container(
-          width: 100,
-          margin: const EdgeInsets.symmetric(horizontal: 10),
-          child: ElevatedButton(
-            onPressed: () {
-              final recorder = ui.PictureRecorder();
-              final canvas = Canvas(recorder);
-
-              if (shapeType == ShapeType.rectangle) {
-                RectanglePainterForCrop(
-                  Rect.fromLTWH(xPos, yPos, shapeWidth, shapeHeight),
-                  widget.uiImage,
-                ).paint(
-                  canvas,
-                  Size(widget.painterWidth, widget.painterHeight),
-                );
-                sendImageToResultScreen(recorder, context);
-              } else if (shapeType == ShapeType.circle) {
-                CirclePainterForCrop(
-                  Rect.fromLTWH(xPos, yPos, shapeWidth, shapeHeight),
-                  widget.uiImage,
-                ).paint(
-                  canvas,
-                  Size(widget.painterWidth, widget.painterHeight),
-                );
-                sendImageToResultScreen(recorder, context);
-              } else if (shapeType == ShapeType.triangle) {
-                TrianglePainterForCrop(
-                  Rect.fromLTWH(xPos, yPos, shapeWidth, shapeHeight),
-                  widget.uiImage,
-                ).paint(
-                  canvas,
-                  Size(widget.painterWidth, widget.painterHeight),
-                );
-                sendImageToResultScreen(recorder, context);
-              }
+    return SizedBox(
+      width: widget.painterWidth,
+      height: widget.painterHeight,
+      child: Stack(
+        children: [
+          GestureDetector(
+            onPanStart: (details) => setPointDragState(details, context),
+            onPanEnd: (details) => resetDragState(),
+            onPanUpdate: (details) => setShapeMovement(details),
+            onTapDown: (details) {
+              print('dx: ${details.globalPosition.dx - widget.startMargin},'
+                  ' dy: ${details.globalPosition.dy - widget.topMargin}');
+              print('shape dx: $xPos, dy: $yPos');
             },
-            child: const Text('Crop'),
+            child: Builder(builder: (context) {
+              widget.cropCallback(xPos, yPos, shapeWidth, shapeHeight);
+              if (shapeType == ShapeType.rectangle) {
+                return CustomPaint(
+                  painter: RectanglePainter(
+                    Rect.fromLTWH(
+                      xPos + radius,
+                      yPos + radius,
+                      shapeWidth,
+                      shapeHeight,
+                    ),
+                    widget.uiImage,
+                  ),
+                  child: Container(),
+                );
+              } else if (shapeType == ShapeType.circle) {
+                return CustomPaint(
+                  painter: CirclePainter(
+                    Rect.fromLTWH(
+                      xPos + radius,
+                      yPos + radius,
+                      shapeWidth,
+                      shapeHeight,
+                    ),
+                    widget.uiImage,
+                  ),
+                  child: Container(),
+                );
+              } else if (shapeType == ShapeType.triangle) {
+                return CustomPaint(
+                  painter: TrianglePainter(
+                    Rect.fromLTWH(
+                      xPos + radius,
+                      yPos + radius,
+                      shapeWidth,
+                      shapeHeight,
+                    ),
+                    widget.uiImage,
+                  ),
+                  child: Container(),
+                );
+              } else {
+                return Container();
+              }
+            }),
           ),
-        ),
-      ],
+          // on point 1,3,7,9
+          MovePoint(xPos, yPos),
+          MovePoint(xPos + shapeWidth, yPos),
+          MovePoint(xPos, yPos + shapeHeight),
+          MovePoint(xPos + shapeWidth, yPos + shapeHeight),
+          // on line 2,4,6,8
+          MovePoint(xPos + shapeWidth / 2, yPos),
+          MovePoint(xPos + shapeWidth / 2, yPos + shapeHeight),
+          MovePoint(xPos, yPos + shapeHeight / 2),
+          MovePoint(xPos + shapeWidth, yPos + shapeHeight / 2),
+        ],
+      ),
     );
-  }
-
-  void sendImageToResultScreen(
-    ui.PictureRecorder recorder,
-    BuildContext context,
-  ) {
-    final rendered = recorder
-        .endRecording()
-        .toImageSync((shapeWidth).floor(), (shapeHeight).floor());
-
-    rendered.toByteData(format: ui.ImageByteFormat.png).then((bytes) {
-      if (bytes != null) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => ResultScreen(
-              image: bytes.buffer.asUint8List(),
-              width: shapeWidth,
-              height: shapeHeight,
-            ),
-          ),
-        );
-      }
-    });
   }
 
   bool isPoint1Dragging = false;
@@ -261,12 +196,8 @@ class _DynamicCropPainterState extends State<DynamicCropPainter> {
   }
 
   void setPointDragState(DragStartDetails details, BuildContext context) {
-    final deviceSize = MediaQuery.of(context).size;
-    final deviceHeight = deviceSize.height;
-
-    final dx = details.globalPosition.dx - 140;
-    final dy =
-        details.globalPosition.dy * (widget.painterHeight / deviceHeight);
+    final dx = details.globalPosition.dx - widget.startMargin;
+    final dy = details.globalPosition.dy - widget.topMargin;
 
     print('drag: $dx, $dy');
     print('shape: $xPos, $yPos');
@@ -311,7 +242,7 @@ class _DynamicCropPainterState extends State<DynamicCropPainter> {
     isShapeDragging = false;
   }
 
-  final extraDragSize = 15;
+  final extraDragSize = 30;
 
   bool isPoint1Drag(double dx, double dy) {
     return dx >= xPos - extraDragSize &&

@@ -1,3 +1,4 @@
+import 'package:dynamic_image_crop_example/const/colors.dart';
 import 'package:flutter/material.dart';
 
 class SizeController extends CustomPainter {
@@ -9,9 +10,11 @@ class SizeController extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     canvas.drawRect(rect, Paint()..color = Colors.transparent);
 
-    final realCircle =
-    Rect.fromCircle(center: rect.center, radius: rect.width / 4);
-    canvas.drawOval(realCircle, Paint()..color = Colors.orange);
+    final width = rect.width;
+
+    final controller = Rect.fromLTWH(rect.left, rect.top, width, rect.height);
+
+    canvas.drawRect(controller, Paint()..color = guideColor);
   }
 
   @override

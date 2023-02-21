@@ -1,8 +1,13 @@
+import 'dart:ui';
+
 import 'package:dynamic_image_crop_example/ui/shapes/drawing_painter.dart';
 import 'package:flutter/material.dart';
+import 'dart:ui' as ui;
 
 class CustomCropPainter extends StatefulWidget {
-  const CustomCropPainter({Key? key}) : super(key: key);
+  const CustomCropPainter(this.uiImage, {Key? key}) : super(key: key);
+
+  final ui.Image uiImage;
 
   @override
   State<CustomCropPainter> createState() => _CustomCropPainterState();
@@ -49,7 +54,7 @@ class _CustomCropPainterState extends State<CustomCropPainter> {
       child: RepaintBoundary(
         key: globalKey,
         child: CustomPaint(
-          painter: DrawingPainter(_points, first),
+          painter: DrawingPainter(_points, first, widget.uiImage),
           child: Container(),
         ),
       ),

@@ -1,13 +1,13 @@
 // ignore_for_file: non_constant_identifier_names
 
-import 'dart:io';
+import 'dart:math';
 
 import 'package:camera/camera.dart';
-import 'package:dynamic_image_crop_example/screen/crop_screen.dart';
-import 'package:dynamic_image_crop_example/ui/image_button.dart';
+import 'package:dynamic_image_crop_example/gen/assets.gen.dart';
+import 'package:dynamic_image_crop_example/ui/buttons/image_button.dart';
+import 'package:dynamic_image_crop_example/utils/camera_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
 
 class CameraView extends StatefulWidget {
   const CameraView({Key? key}) : super(key: key);
@@ -25,6 +25,7 @@ class _CameraViewState extends State<CameraView> {
 
   bool isCameraBack = true;
   CameraController? cameraController;
+  Rect area = Rect.zero;
 
   @override
   Widget build(BuildContext context) {
@@ -34,16 +35,18 @@ class _CameraViewState extends State<CameraView> {
       DeviceOrientation.landscapeRight,
     ]);
     final cameraFullWidth = MediaQuery.of(context).size.width - 133;
+    final deviceWidth = MediaQuery.of(context).size.width;
     final deviceHeight = MediaQuery.of(context).size.height;
     final cameraRealWidth = deviceHeight * (4 / 3);
 
     final horizontalMargin = (cameraFullWidth - cameraRealWidth) / 2;
+    final aspectRatio = MediaQuery.of(context).size.aspectRatio;
 
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          CameraRealPreview(deviceHeight, cameraFullWidth),
+          CameraRealPreview(deviceHeight, cameraFullWidth, aspectRatio),
           MarginForCameraPreview(horizontalMargin, cameraFullWidth),
           Align(
             alignment: Alignment.centerRight,
@@ -55,8 +58,8 @@ class _CameraViewState extends State<CameraView> {
                 child: Container(
                   margin: const EdgeInsets.only(top: 27),
                   child: ImageButton(
-                    unpressedImage: 'images/camera_btn_rotate_nor.webp',
-                    pressedImage: 'images/camera_btn_rotate_pre.webp',
+                    unpressedImage: Assets.images.cameraBtnRotateNor.path,
+                    pressedImage: Assets.images.cameraBtnRotatePre.path,
                     width: 80,
                     height: 80,
                     onTap: () {
@@ -73,11 +76,19 @@ class _CameraViewState extends State<CameraView> {
           Align(
             alignment: Alignment.centerRight,
             child: ImageButton(
-              unpressedImage: 'images/camera_btn_shutter_nor.webp',
-              pressedImage: 'images/camera_btn_shutter_pre.webp',
+              unpressedImage: Assets.images.cameraBtnShutterNor.path,
+              pressedImage: Assets.images.cameraBtnShutterPre.path,
               width: 160,
               height: 147,
-              onTap: () => takePicture(context),
+              onTap: () => takePicture(
+                context,
+                horizontalMargin,
+                cameraRealWidth,
+                deviceHeight,
+                deviceWidth,
+                aspectRatio,
+                cameraController,
+              ),
             ),
           ),
           Align(
@@ -85,8 +96,8 @@ class _CameraViewState extends State<CameraView> {
             child: Container(
               margin: const EdgeInsets.all(26),
               child: ImageButton(
-                unpressedImage: 'images/camera_btn_back_nor.webp',
-                pressedImage: 'images/camera_btn_back_pre.webp',
+                unpressedImage: Assets.images.cameraBtnBackNor.path,
+                pressedImage: Assets.images.cameraBtnBackPre.path,
                 width: 80,
                 height: 80,
                 onTap: () => Navigator.pop(context),
@@ -116,41 +127,36 @@ class _CameraViewState extends State<CameraView> {
     super.dispose();
   }
 
-  Future<void> takePicture(BuildContext context) async {
-    final xFile = await cameraController?.takePicture();
-    final croppedImageBytes = File(xFile?.path ?? '').readAsBytesSync();
-    final tempFile = await File('${(await getTemporaryDirectory()).path}/image.jpg')
-            .create();
-    final resultFile = await tempFile.writeAsBytes(croppedImageBytes);
-    if (resultFile.existsSync()) {
-      // ignore: use_build_context_synchronously
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => CropScreen(resultFile),
+  Widget CameraRealPreview(
+      double deviceHeight, double cameraFullWidth, double aspectRatio) {
+    if (isReady()) {
+      var scale = aspectRatio / cameraController!.value.aspectRatio;
+      if (scale < 1) scale = 1 / scale;
+      return Transform(
+        alignment: Alignment.center,
+        transform: Matrix4.rotationY(isCameraBack ? 0 : pi),
+        child: Transform.scale(
+          scale: scale,
+          child: Center(
+            child: CameraPreview(cameraController!),
+          ),
         ),
       );
     }
-  }
 
-  Widget CameraRealPreview(double deviceHeight, double cameraFullWidth) {
-    return isReady()
-        ? Center(
-            child: SizedBox(
-              height: deviceHeight,
-              child: CameraPreview(cameraController!),
-            ),
-          )
-        : SizedBox(width: cameraFullWidth);
+    return SizedBox(width: cameraFullWidth);
   }
 
   Widget MarginForCameraPreview(
-      double horizontalMargin, double cameraFullWidth) {
+    double horizontalMargin,
+    double cameraFullWidth,
+  ) {
+    double margin = horizontalMargin < 0 ? 0 : horizontalMargin;
     return Stack(
       children: [
         Container(
           color: Colors.black,
-          width: horizontalMargin,
+          width: margin,
         ),
         SizedBox(
           width: cameraFullWidth,
@@ -158,7 +164,7 @@ class _CameraViewState extends State<CameraView> {
             alignment: Alignment.centerRight,
             child: Container(
               color: Colors.black,
-              width: horizontalMargin,
+              width: margin,
             ),
           ),
         ),

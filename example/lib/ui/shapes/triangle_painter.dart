@@ -1,3 +1,4 @@
+import 'package:dynamic_image_crop_example/const/colors.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 
@@ -10,7 +11,7 @@ class TrianglePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final linePaint = Paint()
-      ..color = Colors.orange
+      ..color = guideColor
       ..strokeWidth = 1.0;
 
     canvas.drawImage(image, const Offset(0, 0), Paint());
