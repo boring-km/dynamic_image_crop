@@ -1,11 +1,11 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'dart:ui' as ui;
-import 'package:dynamic_image_crop_example/ui/shapes/circle_painter.dart';
-import 'package:dynamic_image_crop_example/ui/shapes/rectangle_painter.dart';
-import 'package:dynamic_image_crop_example/ui/shapes/shape_type.dart';
-import 'package:dynamic_image_crop_example/ui/shapes/triangle_painter.dart';
-import 'package:dynamic_image_crop_example/ui/size_controller.dart';
+import 'package:dynamic_image_crop_example/screen/shapes/circle_painter.dart';
+import 'package:dynamic_image_crop_example/screen/shapes/rectangle_painter.dart';
+import 'package:dynamic_image_crop_example/screen/shapes/shape_type.dart';
+import 'package:dynamic_image_crop_example/screen/shapes/triangle_painter.dart';
+import 'package:dynamic_image_crop_example/screen/size_controller.dart';
 import 'package:flutter/material.dart';
 
 class DynamicCropPainter extends StatefulWidget {

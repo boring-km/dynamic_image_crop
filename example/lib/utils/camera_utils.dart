@@ -7,20 +7,19 @@ import 'package:image_crop/image_crop.dart';
 import 'package:path_provider/path_provider.dart';
 
 Future<void> takePicture(
-    BuildContext context,
-    double left,
-    double realWidth,
-    double deviceHeight,
-    double deviceWidth,
-    double aspectRatio,
-    CameraController? cameraController,
-    ) async {
+  BuildContext context,
+  double left,
+  double realWidth,
+  double deviceHeight,
+  double deviceWidth,
+  double aspectRatio,
+  CameraController? cameraController,
+) async {
   if (cameraController == null) return;
   final xFile = await cameraController.takePicture();
   final croppedImageBytes = await File(xFile.path ?? '').readAsBytes();
   final tempFile =
-  await File('${(await getTemporaryDirectory()).path}/image.jpg')
-      .create();
+      await File('${(await getTemporaryDirectory()).path}/image.jpg').create();
   final resultFile = await tempFile.writeAsBytes(croppedImageBytes);
 
   var scale = aspectRatio / cameraController.value.aspectRatio;
@@ -29,7 +28,7 @@ Future<void> takePicture(
   // 안보이게 잘린 영역의 절반
   final margin = (deviceWidth * scale - deviceWidth) / 2 + left;
 
-  final area = _calculateDefaultArea(
+  final area = calculateDefaultArea(
     imageWidth: realWidth.toInt(),
     imageHeight: deviceHeight.toInt(),
     viewWidth: deviceWidth * scale,
@@ -39,7 +38,7 @@ Future<void> takePicture(
   );
 
   var topMargin = deviceHeight * 0.06;
-  double imageHeight = deviceHeight - topMargin * 2;  // 상하 48 여백
+  double imageHeight = deviceHeight - topMargin * 2;
   double imageWidth = _getWidthFromHeight(imageHeight);
 
   while (imageWidth > deviceWidth * 0.75) {
@@ -57,15 +56,16 @@ Future<void> takePicture(
   });
 }
 
-double _getWidthFromHeight(double imageHeight) => imageHeight * (4/3);
+double _getWidthFromHeight(double imageHeight) => imageHeight * (4 / 3);
 
-Rect _calculateDefaultArea({
+Rect calculateDefaultArea({
   required int imageWidth,
   required int imageHeight,
   required double viewWidth,
   required double viewHeight,
   required double aspectRatio,
   required double left,
+  double top = 0.0,
 }) {
   double height;
   double width;
@@ -90,6 +90,28 @@ Rect _calculateDefaultArea({
           viewWidth;
     }
   }
+  double fromLeft = left < 0 ? 0 : left / viewWidth;
+  double fromTop = top < 0 ? 0 : top / viewHeight;
 
-  return Rect.fromLTWH(left / viewWidth, 0, width, height);
+  return Rect.fromLTWH(fromLeft, fromTop, width, height);
+}
+
+Rect calculateCropArea({
+  required int? imageWidth,
+  required int? imageHeight,
+  required double viewWidth,
+  required double viewHeight,
+  required double left,
+  double top = 0.0,
+}) {
+  if (imageWidth == null || imageHeight == null) {
+    return Rect.zero;
+  }
+  double height = imageHeight / viewHeight;
+  double width = imageWidth / viewWidth;
+
+  final fromLeft = left < 0 ? 0.0 : left / viewWidth;
+  final fromTop = top < 0 ? 0.0 : top / viewHeight;
+
+  return Rect.fromLTWH(fromLeft, fromTop, width, height);
 }

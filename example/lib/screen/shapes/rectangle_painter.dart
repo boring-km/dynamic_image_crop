@@ -24,27 +24,3 @@ class RectanglePainter extends CustomPainter {
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => true;
 }
-
-class RectanglePainterForCrop extends CustomPainter {
-  RectanglePainterForCrop(this.rect, this.image);
-
-  final Rect rect;
-  final ui.Image image;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final path = Path()
-      ..moveTo(rect.topLeft.dx, rect.topLeft.dy)
-      ..lineTo(rect.topRight.dx, rect.topRight.dy)
-      ..lineTo(rect.bottomRight.dx, rect.bottomRight.dy)
-      ..lineTo(rect.bottomLeft.dx, rect.bottomLeft.dy)
-      ..lineTo(rect.topLeft.dx, rect.topLeft.dy);
-
-    canvas.clipPath(path);
-    canvas.drawImage(image, const Offset(0, 0), Paint());
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) => true;
-}
-

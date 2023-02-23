@@ -3,17 +3,22 @@ import 'dart:typed_data';
 
 import 'package:dynamic_image_crop_example/gen/assets.gen.dart';
 import 'package:dynamic_image_crop_example/screen/result_screen.dart';
-import 'package:dynamic_image_crop_example/ui/buttons/image_button.dart';
-import 'package:dynamic_image_crop_example/ui/buttons/toggle_image_button.dart';
-import 'package:dynamic_image_crop_example/ui/painter/custom_crop_painter.dart';
-import 'package:dynamic_image_crop_example/ui/painter/dynamic_crop_painter.dart';
-import 'package:dynamic_image_crop_example/ui/shapes/circle_painter.dart';
-import 'package:dynamic_image_crop_example/ui/shapes/rectangle_painter.dart';
-import 'package:dynamic_image_crop_example/ui/shapes/shape_type.dart';
-import 'package:dynamic_image_crop_example/ui/shapes/triangle_painter.dart';
+import 'package:dynamic_image_crop_example/screen/buttons/image_button.dart';
+import 'package:dynamic_image_crop_example/screen/buttons/toggle_image_button.dart';
+
+import 'package:dynamic_image_crop_example/screen/painter/dynamic_crop_painter.dart';
+import 'package:dynamic_image_crop_example/screen/shapes/circle_painter.dart';
+import 'package:dynamic_image_crop_example/screen/painter/drawing_painter.dart';
+import 'package:dynamic_image_crop_example/screen/shapes/custom_shape.dart';
+import 'package:dynamic_image_crop_example/screen/shapes/shape_type.dart';
+import 'package:dynamic_image_crop_example/screen/shapes/triangle_painter.dart';
+import 'package:dynamic_image_crop_example/utils/camera_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:image_crop/image_crop.dart';
 import 'package:image_size_getter/image_size_getter.dart' as isg;
 import 'dart:ui' as ui;
+
+import 'package:path_provider/path_provider.dart';
 
 class CropScreen extends StatefulWidget {
   const CropScreen(
@@ -48,6 +53,7 @@ class _CropScreenState extends State<CropScreen> {
   double cropHeight = 0;
   late double topMargin;
   final painterKey = GlobalKey<DynamicCropPainterState>();
+  final customDrawingKey = GlobalKey<CustomShapeState>();
 
   @override
   void initState() {
@@ -60,7 +66,7 @@ class _CropScreenState extends State<CropScreen> {
     painterHeight = widget.imageHeight;
     topMargin = widget.topMargin;
     widget.resultFile.readAsBytes().then((imageBytes) {
-      loadImage(imageBytes, painterWidth).then((result) {
+      loadImage(imageBytes, painterWidth, painterHeight).then((result) {
         setState(() {
           uiImage = result;
         });
@@ -110,7 +116,10 @@ class _CropScreenState extends State<CropScreen> {
                   color: Colors.transparent,
                   width: painterWidth,
                   height: painterHeight,
-                  child: CustomCropPainter(uiImage!),
+                  child: CustomShape(
+                    uiImage!,
+                    key: customDrawingKey,
+                  ),
                 );
               } else {
                 return Container();
@@ -141,45 +150,7 @@ class _CropScreenState extends State<CropScreen> {
                     width: 76,
                     height: 72,
                     onTap: () {
-                      final recorder = ui.PictureRecorder();
-                      final canvas = Canvas(recorder);
-
-                      final xPos = painterKey.currentState!.xPos;
-                      final yPos = painterKey.currentState!.yPos;
-                      final shapeWidth = painterKey.currentState!.shapeWidth;
-                      final shapeHeight = painterKey.currentState!.shapeHeight;
-
-                      if (shapeType == ShapeType.rectangle) {
-                        RectanglePainterForCrop(
-                          Rect.fromLTWH(xPos, yPos, shapeWidth, shapeHeight),
-                          uiImage!,
-                        ).paint(
-                          canvas,
-                          Size(painterWidth, painterHeight),
-                        );
-                        sendImageToResultScreen(
-                            recorder, context, shapeWidth, shapeHeight);
-                      } else if (shapeType == ShapeType.circle) {
-                        CirclePainterForCrop(
-                          Rect.fromLTWH(xPos, yPos, shapeWidth, shapeHeight),
-                          uiImage!,
-                        ).paint(
-                          canvas,
-                          Size(painterWidth, painterHeight),
-                        );
-                        sendImageToResultScreen(
-                            recorder, context, shapeWidth, shapeHeight);
-                      } else if (shapeType == ShapeType.triangle) {
-                        TrianglePainterForCrop(
-                          Rect.fromLTWH(xPos, yPos, shapeWidth, shapeHeight),
-                          uiImage!,
-                        ).paint(
-                          canvas,
-                          Size(painterWidth, painterHeight),
-                        );
-                        sendImageToResultScreen(
-                            recorder, context, shapeWidth, shapeHeight);
-                      }
+                      cropImage(context, menuWidth);
                     },
                   ),
                 ],
@@ -191,11 +162,99 @@ class _CropScreenState extends State<CropScreen> {
     );
   }
 
+  void cropImage(BuildContext context, double menuWidth) {
+    final recorder = ui.PictureRecorder();
+    final canvas = Canvas(recorder);
 
-  final rectangleKey = GlobalKey<ToggleImageButtonState>();
-  final circleKey = GlobalKey<ToggleImageButtonState>();
-  final triangleKey = GlobalKey<ToggleImageButtonState>();
-  final drawingKey = GlobalKey<ToggleImageButtonState>();
+    double xPos;
+    double yPos;
+    double shapeWidth;
+    double shapeHeight;
+
+    if (shapeType == ShapeType.none) {
+      // 전체 이미지 사용
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => ResultScreen(
+            image: widget.resultFile.readAsBytesSync(),
+            width: widget.imageWidth,
+            height: widget.imageHeight,
+          ),
+        ),
+      );
+      return;
+    } else if (shapeType == ShapeType.custom) {
+      // 직접 그리기
+      final drawingArea = customDrawingKey.currentState!.getDrawingArea();
+      xPos = drawingArea.left;
+      yPos = drawingArea.top;
+      shapeWidth = drawingArea.width;
+      shapeHeight = drawingArea.height;
+    } else {
+      // 네모 동그라미 세모
+      xPos = painterKey.currentState!.xPos;
+      yPos = painterKey.currentState!.yPos;
+      shapeWidth = painterKey.currentState!.shapeWidth;
+      shapeHeight = painterKey.currentState!.shapeHeight;
+    }
+
+    final area = calculateCropArea(
+      imageWidth: shapeWidth.floor(),
+      imageHeight: shapeHeight.floor(),
+      viewWidth: painterWidth,
+      viewHeight: painterHeight,
+      left: xPos,
+      top: yPos,
+    );
+
+    ImageCrop.cropImage(file: widget.resultFile, area: area).then((file) {
+      if (shapeType == ShapeType.rectangle) {
+        sendResultImage(file.readAsBytesSync().buffer.asByteData(), context,
+            shapeWidth, shapeHeight);
+      } else {
+        loadImage(file.readAsBytesSync(), shapeWidth, shapeHeight)
+            .then((image) {
+          final width = image.width.toDouble();
+          final height = image.height.toDouble();
+          if (shapeType == ShapeType.circle) {
+            CirclePainterForCrop(
+              Rect.fromLTWH(0, 0, width, height),
+              image,
+            ).paint(
+              canvas,
+              Size(width, height),
+            );
+          } else if (shapeType == ShapeType.triangle) {
+            TrianglePainterForCrop(
+              Rect.fromLTWH(0, 0, width, height),
+              image,
+            ).paint(
+              canvas,
+              Size(width, height),
+            );
+          } else if (shapeType == ShapeType.custom) {
+            DrawingCropPainter(
+              customDrawingKey.currentState!.points,
+              customDrawingKey.currentState!.first,
+              image,
+              xPos,
+              yPos,
+            ).paint(
+              canvas,
+              Size(width, height),
+            );
+          }
+          sendImageToResultScreen(recorder, context, width, height);
+        });
+      }
+    });
+  }
+
+  final rectangleButtonKey = GlobalKey<ToggleImageButtonState>();
+  final circleButtonKey = GlobalKey<ToggleImageButtonState>();
+  final triangleButtonKey = GlobalKey<ToggleImageButtonState>();
+  final drawingButtonKey = GlobalKey<ToggleImageButtonState>();
 
   Widget buildShapeButtons(double menuWidth) {
     return SizedBox(
@@ -217,7 +276,7 @@ class _CropScreenState extends State<CropScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   ToggleImageButton(
-                    key: rectangleKey,
+                    key: rectangleButtonKey,
                     offImage: Assets.images.mBookBtnNemo.path,
                     onImage: Assets.images.mBookBtnNemoSelected.path,
                     width: 87,
@@ -228,7 +287,7 @@ class _CropScreenState extends State<CropScreen> {
                   ),
                   const SizedBox(height: 26),
                   ToggleImageButton(
-                    key: circleKey,
+                    key: circleButtonKey,
                     offImage: Assets.images.mBookBtnCircle.path,
                     onImage: Assets.images.mBookBtnCircleSelected.path,
                     width: 87,
@@ -239,7 +298,7 @@ class _CropScreenState extends State<CropScreen> {
                   ),
                   const SizedBox(height: 26),
                   ToggleImageButton(
-                    key: triangleKey,
+                    key: triangleButtonKey,
                     offImage: Assets.images.mBookBtnTriangle.path,
                     onImage: Assets.images.mBookBtnTriangleSelected.path,
                     width: 87,
@@ -250,7 +309,7 @@ class _CropScreenState extends State<CropScreen> {
                   ),
                   const SizedBox(height: 26),
                   ToggleImageButton(
-                    key: drawingKey,
+                    key: drawingButtonKey,
                     offImage: Assets.images.mBookBtnDrawing.path,
                     onImage: Assets.images.mBookBtnDrawingSelected.path,
                     width: 87,
@@ -270,7 +329,8 @@ class _CropScreenState extends State<CropScreen> {
 
   void setImageState(bool imageState, ShapeType type) {
     setState(() {
-      if (imageState) {  // 이미 켜져있는 버튼 닫기
+      if (imageState) {
+        // 이미 켜져있는 버튼 닫기
         if (shapeType != type) {
           if (shapeType == ShapeType.rectangle) {
             setRectangleState(!imageState);
@@ -290,26 +350,26 @@ class _CropScreenState extends State<CropScreen> {
   }
 
   void setRectangleState(bool state) {
-    rectangleKey.currentState!.setState(() {
-      rectangleKey.currentState!.imageState = state;
+    rectangleButtonKey.currentState!.setState(() {
+      rectangleButtonKey.currentState!.imageState = state;
     });
   }
 
   void setCircleState(bool state) {
-    circleKey.currentState!.setState(() {
-      circleKey.currentState!.imageState = state;
+    circleButtonKey.currentState!.setState(() {
+      circleButtonKey.currentState!.imageState = state;
     });
   }
 
   void setTriangleState(bool state) {
-    triangleKey.currentState!.setState(() {
-      triangleKey.currentState!.imageState = state;
+    triangleButtonKey.currentState!.setState(() {
+      triangleButtonKey.currentState!.imageState = state;
     });
   }
 
   void setDrawingState(bool state) {
-    drawingKey.currentState!.setState(() {
-      drawingKey.currentState!.imageState = state;
+    drawingButtonKey.currentState!.setState(() {
+      drawingButtonKey.currentState!.imageState = state;
     });
   }
 
@@ -324,17 +384,58 @@ class _CropScreenState extends State<CropScreen> {
         .toImageSync((shapeWidth).floor(), (shapeHeight).floor());
 
     rendered.toByteData(format: ui.ImageByteFormat.png).then((bytes) {
-      if (bytes != null) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => ResultScreen(
-              image: bytes.buffer.asUint8List(),
-              width: shapeWidth,
-              height: shapeHeight,
-            ),
+      sendResultImage(bytes, context, shapeWidth, shapeHeight);
+    });
+  }
+
+  void sendResultImage(ByteData? bytes, BuildContext context, double shapeWidth,
+      double shapeHeight) {
+    if (bytes != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => ResultScreen(
+            image: bytes.buffer.asUint8List(),
+            width: shapeWidth,
+            height: shapeHeight,
           ),
-        );
+        ),
+      );
+    }
+  }
+
+  void sendDrawingImageToResultScreen(ui.PictureRecorder recorder,
+      BuildContext context, double painterWidth, double painterHeight) {
+    final d = customDrawingKey.currentState!.getDrawingArea();
+
+    final area = calculateCropArea(
+      imageWidth: d.width.floor(),
+      imageHeight: d.height.floor(),
+      viewWidth: painterWidth,
+      viewHeight: painterHeight,
+      left: d.left,
+      top: d.top,
+    );
+
+    final rendered = recorder
+        .endRecording()
+        .toImageSync((painterWidth).floor(), (painterHeight).floor());
+
+    rendered.toByteData(format: ui.ImageByteFormat.png).then((bytes) {
+      if (bytes != null) {
+        getTemporaryDirectory().then((dir) {
+          var tempFile = File('${dir.path}/temp.png');
+          tempFile.createSync();
+          tempFile.writeAsBytesSync(bytes.buffer.asUint8List());
+          ImageCrop.cropImage(file: tempFile, area: area).then((file) {
+            sendResultImage(
+              file.readAsBytesSync().buffer.asByteData(),
+              context,
+              d.width,
+              d.height,
+            );
+          });
+        });
       }
     });
   }
@@ -356,11 +457,12 @@ class _CropScreenState extends State<CropScreen> {
   Future<ui.Image> loadImage(
     Uint8List img,
     double targetWidth,
+    double targetHeight,
   ) async {
     final codec = await ui.instantiateImageCodec(
       img,
-      targetWidth: painterWidth.toInt(),
-      targetHeight: painterHeight.toInt(),
+      targetWidth: targetWidth.toInt(),
+      targetHeight: targetHeight.toInt(),
     );
     return (await codec.getNextFrame()).image;
   }

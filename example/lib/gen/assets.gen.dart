@@ -44,9 +44,9 @@ class $ImagesGen {
   AssetGenImage get mBookBtnCancel =>
       const AssetGenImage('images/m_book_btn_cancel.png');
 
-  /// File path: images/m_book_btn_cancel_over_selected.png
+  /// File path: images/m_book_btn_cancel_over_selected.webp
   AssetGenImage get mBookBtnCancelOverSelected =>
-      const AssetGenImage('images/m_book_btn_cancel_over_selected.png');
+      const AssetGenImage('images/m_book_btn_cancel_over_selected.webp');
 
   /// File path: images/m_book_btn_circle.png
   AssetGenImage get mBookBtnCircle =>
@@ -68,9 +68,9 @@ class $ImagesGen {
   AssetGenImage get mBookBtnImgcropSave =>
       const AssetGenImage('images/m_book_btn_imgcrop_save.png');
 
-  /// File path: images/m_book_btn_imgcrop_save_selected.png
+  /// File path: images/m_book_btn_imgcrop_save_selected.webp
   AssetGenImage get mBookBtnImgcropSaveSelected =>
-      const AssetGenImage('images/m_book_btn_imgcrop_save_selected.png');
+      const AssetGenImage('images/m_book_btn_imgcrop_save_selected.webp');
 
   /// File path: images/m_book_btn_nemo.png
   AssetGenImage get mBookBtnNemo =>

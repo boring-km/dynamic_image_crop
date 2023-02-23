@@ -24,10 +24,12 @@ class _ResultScreenState extends State<ResultScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.lightGreen,
-      body: Image.memory(
-        widget.image,
-        width: widget.width,
-        height: widget.height,
+      body: Center(
+        child: Image.memory(
+          widget.image,
+          width: widget.width,
+          height: widget.height,
+        ),
       ),
     );
   }

@@ -4,7 +4,7 @@ import 'dart:math';
 
 import 'package:camera/camera.dart';
 import 'package:dynamic_image_crop_example/gen/assets.gen.dart';
-import 'package:dynamic_image_crop_example/ui/buttons/image_button.dart';
+import 'package:dynamic_image_crop_example/screen/buttons/image_button.dart';
 import 'package:dynamic_image_crop_example/utils/camera_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -173,7 +173,7 @@ class _CameraViewState extends State<CameraView> {
   }
 
   bool isReady() {
-    return cameraController?.value.isInitialized ?? false;
+    return (cameraController?.value.isInitialized ?? false) && cameraController != null;
   }
 
   void initCamera({bool back = true}) {
