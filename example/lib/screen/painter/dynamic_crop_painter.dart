@@ -29,7 +29,7 @@ class DynamicCropPainter extends StatefulWidget {
   final double topMargin;
   final double startMargin;
   final void Function(double x, double y, double width, double height)
-      cropCallback;
+  cropCallback;
 
   @override
   State<DynamicCropPainter> createState() => DynamicCropPainterState();

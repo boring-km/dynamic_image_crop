@@ -4,7 +4,7 @@ description: Demonstrates how to use the dynamic_image_crop plugin.
 publish_to: 'none'
 
 environment:
-  sdk: '>=2.19.0 <3.0.0'
+  sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
   flutter:
@@ -15,9 +15,9 @@ dependencies:
 
   cupertino_icons: ^1.0.2
 
-  image_picker: ^0.8.5+3
+  image_picker: ^0.8.7+5
   image_size_getter: ^2.1.2
-  camera: ^0.10.3
+  camera: ^0.10.5
   path_provider:
   image_crop: ^0.4.1
 

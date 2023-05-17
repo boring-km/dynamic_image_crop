@@ -47,7 +47,7 @@ class MyCrop extends StatefulWidget {
       context.findAncestorStateOfType<MyCropState>();
 }
 
-class MyCropState extends State<MyCrop> with TickerProviderStateMixin, Drag {
+class MyCropState extends State<MyCrop> with TickerProviderStateMixin {
   final _surfaceKey = GlobalKey();
 
   late final AnimationController _activeController;

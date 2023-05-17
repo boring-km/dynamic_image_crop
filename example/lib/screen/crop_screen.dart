@@ -2,11 +2,11 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:dynamic_image_crop_example/gen/assets.gen.dart';
-import 'package:dynamic_image_crop_example/screen/result_screen.dart';
 import 'package:dynamic_image_crop_example/screen/buttons/image_button.dart';
 import 'package:dynamic_image_crop_example/screen/buttons/toggle_image_button.dart';
 
 import 'package:dynamic_image_crop_example/screen/painter/dynamic_crop_painter.dart';
+import 'package:dynamic_image_crop_example/screen/result_screen.dart';
 import 'package:dynamic_image_crop_example/screen/shapes/circle_painter.dart';
 import 'package:dynamic_image_crop_example/screen/painter/drawing_painter.dart';
 import 'package:dynamic_image_crop_example/screen/shapes/custom_shape.dart';
@@ -26,8 +26,8 @@ class CropScreen extends StatefulWidget {
     this.imageWidth,
     this.imageHeight,
     this.topMargin, {
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   final File resultFile;
   final double imageWidth;
@@ -43,7 +43,7 @@ class _CropScreenState extends State<CropScreen> {
   isg.Size? imageSize;
 
   late double painterWidth; // painter 가로 길이를 fix
-  double painterHeight = 0.0;
+  double painterHeight = 0;
 
   ui.Image? uiImage;
 
@@ -76,7 +76,7 @@ class _CropScreenState extends State<CropScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
+    final size = MediaQuery.of(context).size;
     final menuWidth = (size.width - painterWidth) / 2;
 
     return Scaffold(
@@ -88,50 +88,51 @@ class _CropScreenState extends State<CropScreen> {
           buildShapeButtons(menuWidth),
           Container(
             margin: EdgeInsets.only(top: topMargin),
-            child: Builder(builder: (context) {
-              if (shapeType == ShapeType.none) {
-                return Image.file(
-                  widget.resultFile,
-                  width: painterWidth,
-                  height: painterHeight,
-                );
-              } else if (uiImage != null && shapeType != ShapeType.custom) {
-                return DynamicCropPainter(
-                  painterWidth: painterWidth,
-                  painterHeight: painterHeight,
-                  uiImage: uiImage!,
-                  shapeType: shapeType,
-                  key: painterKey,
-                  startMargin: menuWidth,
-                  topMargin: topMargin,
-                  cropCallback: (x, y, width, height) {
-                    dx = x;
-                    dy = y;
-                    cropWidth = width;
-                    cropHeight = height;
-                  },
-                );
-              } else if (uiImage != null && shapeType == ShapeType.custom) {
-                return Container(
-                  color: Colors.transparent,
-                  width: painterWidth,
-                  height: painterHeight,
-                  child: CustomShape(
-                    uiImage!,
-                    key: customDrawingKey,
-                  ),
-                );
-              } else {
-                return Container();
-              }
-            }),
+            child: Builder(
+              builder: (context) {
+                if (shapeType == ShapeType.none) {
+                  return Image.file(
+                    widget.resultFile,
+                    width: painterWidth,
+                    height: painterHeight,
+                  );
+                } else if (uiImage != null && shapeType != ShapeType.custom) {
+                  return DynamicCropPainter(
+                    painterWidth: painterWidth,
+                    painterHeight: painterHeight,
+                    uiImage: uiImage!,
+                    shapeType: shapeType,
+                    key: painterKey,
+                    startMargin: menuWidth,
+                    topMargin: topMargin,
+                    cropCallback: (x, y, width, height) {
+                      dx = x;
+                      dy = y;
+                      cropWidth = width;
+                      cropHeight = height;
+                    },
+                  );
+                } else if (uiImage != null && shapeType == ShapeType.custom) {
+                  return Container(
+                    color: Colors.transparent,
+                    width: painterWidth,
+                    height: painterHeight,
+                    child: CustomShape(
+                      uiImage!,
+                      key: customDrawingKey,
+                    ),
+                  );
+                } else {
+                  return Container();
+                }
+              },
+            ),
           ),
           SizedBox(
             width: menuWidth,
             child: Container(
               margin: EdgeInsets.only(top: topMargin),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   ImageButton(
                     unpressedImage: Assets.images.mBookBtnCancel.path,
@@ -173,15 +174,11 @@ class _CropScreenState extends State<CropScreen> {
 
     if (shapeType == ShapeType.none) {
       // 전체 이미지 사용
-      Navigator.push(
+      sendResult(
+        widget.resultFile.readAsBytesSync(),
+        widget.imageWidth,
+        widget.imageHeight,
         context,
-        MaterialPageRoute(
-          builder: (_) => ResultScreen(
-            image: widget.resultFile.readAsBytesSync(),
-            width: widget.imageWidth,
-            height: widget.imageHeight,
-          ),
-        ),
       );
       return;
     } else if (shapeType == ShapeType.custom) {
@@ -210,8 +207,12 @@ class _CropScreenState extends State<CropScreen> {
 
     ImageCrop.cropImage(file: widget.resultFile, area: area).then((file) {
       if (shapeType == ShapeType.rectangle) {
-        sendResultImage(file.readAsBytesSync().buffer.asByteData(), context,
-            shapeWidth, shapeHeight);
+        sendResultImage(
+          file.readAsBytesSync(),
+          shapeWidth,
+          shapeHeight,
+          context,
+        );
       } else {
         loadImage(file.readAsBytesSync(), shapeWidth, shapeHeight)
             .then((image) {
@@ -273,7 +274,6 @@ class _CropScreenState extends State<CropScreen> {
               width: menuWidth,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   ToggleImageButton(
                     key: rectangleButtonKey,
@@ -381,31 +381,35 @@ class _CropScreenState extends State<CropScreen> {
   ) {
     final rendered = recorder
         .endRecording()
-        .toImageSync((shapeWidth).floor(), (shapeHeight).floor());
+        .toImageSync(shapeWidth.floor(), shapeHeight.floor());
 
     rendered.toByteData(format: ui.ImageByteFormat.png).then((bytes) {
-      sendResultImage(bytes, context, shapeWidth, shapeHeight);
+      sendResultImage(
+        bytes?.buffer.asUint8List(),
+        shapeWidth,
+        shapeHeight,
+        context,
+      );
     });
   }
 
-  void sendResultImage(ByteData? bytes, BuildContext context, double shapeWidth,
-      double shapeHeight) {
+  void sendResultImage(
+    Uint8List? bytes,
+    double shapeWidth,
+    double shapeHeight,
+    BuildContext context,
+  ) {
     if (bytes != null) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => ResultScreen(
-            image: bytes.buffer.asUint8List(),
-            width: shapeWidth,
-            height: shapeHeight,
-          ),
-        ),
-      );
+      sendResult(bytes, shapeWidth, shapeHeight, context);
     }
   }
 
-  void sendDrawingImageToResultScreen(ui.PictureRecorder recorder,
-      BuildContext context, double painterWidth, double painterHeight) {
+  void sendDrawingImageToResultScreen(
+    ui.PictureRecorder recorder,
+    BuildContext context,
+    double painterWidth,
+    double painterHeight,
+  ) {
     final d = customDrawingKey.currentState!.getDrawingArea();
 
     final area = calculateCropArea(
@@ -419,20 +423,20 @@ class _CropScreenState extends State<CropScreen> {
 
     final rendered = recorder
         .endRecording()
-        .toImageSync((painterWidth).floor(), (painterHeight).floor());
+        .toImageSync(painterWidth.floor(), painterHeight.floor());
 
     rendered.toByteData(format: ui.ImageByteFormat.png).then((bytes) {
       if (bytes != null) {
         getTemporaryDirectory().then((dir) {
-          var tempFile = File('${dir.path}/temp.png');
-          tempFile.createSync();
-          tempFile.writeAsBytesSync(bytes.buffer.asUint8List());
+          final tempFile = File('${dir.path}/temp.png')
+            ..createSync()
+            ..writeAsBytesSync(bytes.buffer.asUint8List());
           ImageCrop.cropImage(file: tempFile, area: area).then((file) {
             sendResultImage(
-              file.readAsBytesSync().buffer.asByteData(),
-              context,
+              file.readAsBytesSync(),
               d.width,
               d.height,
+              context,
             );
           });
         });
@@ -445,10 +449,10 @@ class _CropScreenState extends State<CropScreen> {
     if (imageSize != null) {
       final deviceWidth = MediaQuery.of(context).size.width;
       final deviceHeight = MediaQuery.of(context).size.height;
-      var ratio = width / deviceWidth;
-      height = (ratio * deviceHeight);
+      final ratio = width / deviceWidth;
+      height = ratio * deviceHeight;
       if (height > deviceHeight) {
-        height = (deviceHeight - 100);
+        height = deviceHeight - 100;
       }
     }
     return height;
@@ -465,5 +469,16 @@ class _CropScreenState extends State<CropScreen> {
       targetHeight: targetHeight.toInt(),
     );
     return (await codec.getNextFrame()).image;
+  }
+
+  void sendResult(
+      Uint8List image, double width, double height, BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) =>
+            ResultScreen(image: image, width: width, height: height),
+      ),
+    );
   }
 }

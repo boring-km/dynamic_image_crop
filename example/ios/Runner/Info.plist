@@ -48,6 +48,8 @@
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
   <key>NSCameraUsageDescription</key>
-  <string>카메라 사용</string>
+  <string>Use Camera</string>
+  <key>NSPhotoLibraryUsageDescription</key>
+  <string>Use Photo Library</string>
 </dict>
 </plist>

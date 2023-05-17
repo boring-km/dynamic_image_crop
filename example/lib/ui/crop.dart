@@ -1,10 +1,8 @@
 import 'dart:io';
 import 'dart:math';
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:dynamic_image_crop_example/ui/crop_painter.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 enum _CropAction { none, moving, cropping }
@@ -40,7 +38,7 @@ class MyCrop extends StatefulWidget {
       context.findAncestorStateOfType<MyCropState>();
 }
 
-class MyCropState extends State<MyCrop> with TickerProviderStateMixin, Drag {
+class MyCropState extends State<MyCrop> with TickerProviderStateMixin {
   final _surfaceKey = GlobalKey();
 
   late final AnimationController _activeController;
