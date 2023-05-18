@@ -15,10 +15,7 @@ import 'package:dynamic_image_crop_example/screen/shapes/triangle_painter.dart';
 import 'package:dynamic_image_crop_example/utils/camera_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:image_crop/image_crop.dart';
-import 'package:image_size_getter/image_size_getter.dart' as isg;
 import 'dart:ui' as ui;
-
-import 'package:path_provider/path_provider.dart';
 
 class CropScreen extends StatefulWidget {
   const CropScreen(
@@ -40,7 +37,6 @@ class CropScreen extends StatefulWidget {
 
 class _CropScreenState extends State<CropScreen> {
   ShapeType shapeType = ShapeType.none;
-  isg.Size? imageSize;
 
   late double painterWidth; // painter 가로 길이를 fix
   double painterHeight = 0;
@@ -431,60 +427,6 @@ class _CropScreenState extends State<CropScreen> {
     if (bytes != null) {
       sendResult(bytes, shapeWidth, shapeHeight, context);
     }
-  }
-
-  void sendDrawingImageToResultScreen(
-    ui.PictureRecorder recorder,
-    BuildContext context,
-    double painterWidth,
-    double painterHeight,
-  ) {
-    final d = customDrawingKey.currentState!.getDrawingArea();
-
-    final area = calculateCropArea(
-      imageWidth: d.width.floor(),
-      imageHeight: d.height.floor(),
-      viewWidth: painterWidth,
-      viewHeight: painterHeight,
-      left: d.left,
-      top: d.top,
-    );
-
-    final rendered = recorder
-        .endRecording()
-        .toImageSync(painterWidth.floor(), painterHeight.floor());
-
-    rendered.toByteData(format: ui.ImageByteFormat.png).then((bytes) {
-      if (bytes != null) {
-        getTemporaryDirectory().then((dir) {
-          final tempFile = File('${dir.path}/temp.png')
-            ..createSync()
-            ..writeAsBytesSync(bytes.buffer.asUint8List());
-          ImageCrop.cropImage(file: tempFile, area: area).then((file) {
-            sendResultImage(
-              file.readAsBytesSync(),
-              d.width,
-              d.height,
-              context,
-            );
-          });
-        });
-      }
-    });
-  }
-
-  double setPainterHeight(BuildContext context, double width) {
-    var height = 0.0;
-    if (imageSize != null) {
-      final deviceWidth = MediaQuery.of(context).size.width;
-      final deviceHeight = MediaQuery.of(context).size.height;
-      final ratio = width / deviceWidth;
-      height = ratio * deviceHeight;
-      if (height > deviceHeight) {
-        height = deviceHeight - 100;
-      }
-    }
-    return height;
   }
 
   Future<ui.Image> loadImage(
