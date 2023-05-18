@@ -36,10 +36,6 @@ class $ImagesGen {
   AssetGenImage get cameraBtnShutterPre =>
       const AssetGenImage('images/camera_btn_shutter_pre.webp');
 
-  /// File path: images/img_type_logo.png
-  AssetGenImage get imgTypeLogo =>
-      const AssetGenImage('images/img_type_logo.png');
-
   /// File path: images/m_book_btn_cancel.png
   AssetGenImage get mBookBtnCancel =>
       const AssetGenImage('images/m_book_btn_cancel.png');
@@ -96,7 +92,6 @@ class $ImagesGen {
         cameraBtnRotatePre,
         cameraBtnShutterNor,
         cameraBtnShutterPre,
-        imgTypeLogo,
         mBookBtnCancel,
         mBookBtnCancelOverSelected,
         mBookBtnCircle,
