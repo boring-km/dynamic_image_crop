@@ -1,18 +1,18 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:dynamic_image_crop/shapes/shape_type.dart';
+import 'package:dynamic_image_crop/shapes/triangle_painter.dart';
 import 'package:dynamic_image_crop_example/gen/assets.gen.dart';
 import 'package:dynamic_image_crop_example/screen/buttons/image_button.dart';
 import 'package:dynamic_image_crop_example/screen/buttons/toggle_image_button.dart';
 
-import 'package:dynamic_image_crop_example/screen/painter/dynamic_crop_painter.dart';
+import 'package:dynamic_image_crop/painter/dynamic_crop_painter.dart';
 import 'package:dynamic_image_crop_example/screen/result_screen.dart';
-import 'package:dynamic_image_crop_example/screen/shapes/circle_painter.dart';
-import 'package:dynamic_image_crop_example/screen/painter/drawing_painter.dart';
-import 'package:dynamic_image_crop_example/screen/shapes/custom_shape.dart';
-import 'package:dynamic_image_crop_example/screen/shapes/shape_type.dart';
-import 'package:dynamic_image_crop_example/screen/shapes/triangle_painter.dart';
-import 'package:dynamic_image_crop_example/utils/camera_utils.dart';
+import 'package:dynamic_image_crop/shapes/circle_painter.dart';
+import 'package:dynamic_image_crop/shapes/custom_shape.dart';
+import 'package:dynamic_image_crop/painter/drawing_painter.dart';
+import 'package:dynamic_image_crop/camera_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:image_crop/image_crop.dart';
 import 'dart:ui' as ui;
@@ -22,7 +22,9 @@ class CropScreen extends StatefulWidget {
     this.resultFile,
     this.imageWidth,
     this.imageHeight, {
-    super.key, this.startMargin, this.topMargin,
+    super.key,
+    this.startMargin,
+    this.topMargin,
   });
 
   final File resultFile;
@@ -92,73 +94,78 @@ class _CropScreenState extends State<CropScreen> {
               padding: const EdgeInsets.all(16),
               color: const Color(0x66666666),
               child: Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    ToggleImageButton(
-                      key: rectangleButtonKey,
-                      offImage: Assets.images.mBookBtnNemo.path,
-                      onImage: Assets.images.mBookBtnNemoSelected.path,
-                      width: 87,
-                      height: 73,
-                      onTap: (imageState) {
-                        setImageState(imageState, ShapeType.rectangle);
-                      },
-                    ),
-                    const SizedBox(height: 26),
-                    ToggleImageButton(
-                      key: circleButtonKey,
-                      offImage: Assets.images.mBookBtnCircle.path,
-                      onImage: Assets.images.mBookBtnCircleSelected.path,
-                      width: 87,
-                      height: 73,
-                      onTap: (imageState) {
-                        setImageState(imageState, ShapeType.circle);
-                      },
-                    ),
-                    const SizedBox(height: 26),
-                    ToggleImageButton(
-                      key: triangleButtonKey,
-                      offImage: Assets.images.mBookBtnTriangle.path,
-                      onImage: Assets.images.mBookBtnTriangleSelected.path,
-                      width: 87,
-                      height: 73,
-                      onTap: (imageState) {
-                        setImageState(imageState, ShapeType.triangle);
-                      },
-                    ),
-                    const SizedBox(height: 26),
-                    ToggleImageButton(
-                      key: drawingButtonKey,
-                      offImage: Assets.images.mBookBtnDrawing.path,
-                      onImage: Assets.images.mBookBtnDrawingSelected.path,
-                      width: 87,
-                      height: 73,
-                      onTap: (imageState) {
-                        setImageState(imageState, ShapeType.custom);
-                      },
-                    ),
-                    ImageButton(
-                      unpressedImage: Assets.images.mBookBtnCancel.path,
-                      pressedImage: Assets.images.mBookBtnCancelOverSelected.path,
-                      width: 76,
-                      height: 72,
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                    const SizedBox(width: 12),
-                    ImageButton(
-                      unpressedImage: Assets.images.mBookBtnImgcropSave.path,
-                      pressedImage: Assets.images.mBookBtnImgcropSaveSelected.path,
-                      width: 76,
-                      height: 72,
-                      onTap: () {
-                        cropImage(context);
-                      },
-                    ),
-                  ],
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      ToggleImageButton(
+                        key: rectangleButtonKey,
+                        offImage: Assets.images.mBookBtnNemo.path,
+                        onImage: Assets.images.mBookBtnNemoSelected.path,
+                        width: 87,
+                        height: 73,
+                        onTap: (imageState) {
+                          setImageState(imageState, ShapeType.rectangle);
+                        },
+                      ),
+                      const SizedBox(height: 26),
+                      ToggleImageButton(
+                        key: circleButtonKey,
+                        offImage: Assets.images.mBookBtnCircle.path,
+                        onImage: Assets.images.mBookBtnCircleSelected.path,
+                        width: 87,
+                        height: 73,
+                        onTap: (imageState) {
+                          setImageState(imageState, ShapeType.circle);
+                        },
+                      ),
+                      const SizedBox(height: 26),
+                      ToggleImageButton(
+                        key: triangleButtonKey,
+                        offImage: Assets.images.mBookBtnTriangle.path,
+                        onImage: Assets.images.mBookBtnTriangleSelected.path,
+                        width: 87,
+                        height: 73,
+                        onTap: (imageState) {
+                          setImageState(imageState, ShapeType.triangle);
+                        },
+                      ),
+                      const SizedBox(height: 26),
+                      ToggleImageButton(
+                        key: drawingButtonKey,
+                        offImage: Assets.images.mBookBtnDrawing.path,
+                        onImage: Assets.images.mBookBtnDrawingSelected.path,
+                        width: 87,
+                        height: 73,
+                        onTap: (imageState) {
+                          setImageState(imageState, ShapeType.custom);
+                        },
+                      ),
+                      ImageButton(
+                        unpressedImage: Assets.images.mBookBtnCancel.path,
+                        pressedImage:
+                            Assets.images.mBookBtnCancelOverSelected.path,
+                        width: 76,
+                        height: 72,
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                      const SizedBox(width: 12),
+                      ImageButton(
+                        unpressedImage: Assets.images.mBookBtnImgcropSave.path,
+                        pressedImage:
+                            Assets.images.mBookBtnImgcropSaveSelected.path,
+                        width: 76,
+                        height: 72,
+                        onTap: () {
+                          cropImage(context);
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

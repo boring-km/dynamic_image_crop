@@ -1,7 +1,7 @@
 import 'dart:math';
 
-import 'package:dynamic_image_crop_example/screen/painter/drawing_area.dart';
-import 'package:dynamic_image_crop_example/screen/painter/drawing_painter.dart';
+import 'package:dynamic_image_crop/painter/drawing_area.dart';
+import 'package:dynamic_image_crop/painter/drawing_painter.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 

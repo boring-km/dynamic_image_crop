@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:dynamic_image_crop_example/const/colors.dart';
+import 'package:dynamic_image_crop/colors.dart';
 
 class SizeController extends CustomPainter {
   SizeController(this.rect);
