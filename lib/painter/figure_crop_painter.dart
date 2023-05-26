@@ -8,8 +8,8 @@ import 'package:dynamic_image_crop/shapes/triangle_painter.dart';
 import 'package:dynamic_image_crop/size_controller.dart';
 import 'package:flutter/material.dart';
 
-class DynamicCropPainter extends StatefulWidget {
-  const DynamicCropPainter({
+class FigureCropPainter extends StatefulWidget {
+  const FigureCropPainter({
     super.key,
     required this.painterWidth,
     required this.painterHeight,
@@ -32,10 +32,10 @@ class DynamicCropPainter extends StatefulWidget {
   cropCallback;
 
   @override
-  State<DynamicCropPainter> createState() => DynamicCropPainterState();
+  State<FigureCropPainter> createState() => FigureCropPainterState();
 }
 
-class DynamicCropPainterState extends State<DynamicCropPainter> {
+class FigureCropPainterState extends State<FigureCropPainter> {
   var xPos = 0.0;
   var yPos = 0.0;
   double shapeWidth = 200.0;
