@@ -16,6 +16,9 @@ class TestApp extends StatefulWidget {
 }
 
 class _TestAppState extends State<TestApp> {
+
+  final ImagePicker imagePicker = ImagePicker();
+
   @override
   void initState() {
     super.initState();
@@ -23,40 +26,23 @@ class _TestAppState extends State<TestApp> {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        body: SelectView(),
-      ),
-    );
-  }
-}
-
-class SelectView extends StatefulWidget {
-  const SelectView({Key? key}) : super(key: key);
-
-  @override
-  State<SelectView> createState() => _SelectViewState();
-}
-
-class _SelectViewState extends State<SelectView> {
-  final ImagePicker imagePicker = ImagePicker();
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(onPressed: pickCamera, child: const Text('Camera')),
-            ElevatedButton(onPressed: pickImage, child: const Text('Gallery')),
-          ],
+        backgroundColor: Colors.white,
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(onPressed: pickCamera, child: const Text('Camera')),
+              ElevatedButton(onPressed: pickImage, child: const Text('Gallery')),
+            ],
+          ),
         ),
       ),
     );
   }
+
 
   void pickCamera() {
     imagePicker.pickImage(source: ImageSource.camera).then((xFile) {
