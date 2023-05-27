@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:dynamic_image_crop/image_utils.dart';
 import 'package:dynamic_image_crop/shapes/shape_type.dart';
 import 'package:dynamic_image_crop/shapes/triangle_painter.dart';
 import 'package:dynamic_image_crop_example/gen/assets.gen.dart';
@@ -14,9 +15,7 @@ import 'package:dynamic_image_crop/painter/drawing_painter.dart';
 import 'package:dynamic_image_crop/camera_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:image_crop/image_crop.dart';
-import 'package:image_size_getter/file_input.dart';
 import 'dart:ui' as ui;
-import 'package:image_size_getter/image_size_getter.dart' as isg;
 
 class CropScreen extends StatefulWidget {
   const CropScreen(this.resultFile, {super.key});
@@ -53,82 +52,57 @@ class _CropScreenState extends State<CropScreen> {
     super.initState();
   }
 
-  void getImageFromFile(File file) {
-    final deviceSize = MediaQuery.of(context).size;
-    final deviceWidth = deviceSize.width.toDouble();
-    final deviceHeight = deviceSize.height.toDouble();
+  void getImageFromFile(File file) async {
+    final (deviceWidth, deviceHeight) = ImageUtils.getDeviceSize(context);
+    ImageUtils.getImageSize(file, (imageWidth, imageHeight) {
+      final isImageWidthLonger = imageWidth > imageHeight;
 
-    final imageSize = isg.ImageSizeGetter.getSize(FileInput(file));
-    final needRotate = imageSize.needRotate;
-    final imageWidth =
-        (needRotate ? imageSize.height : imageSize.width).toDouble();
-    final imageHeight =
-        (needRotate ? imageSize.width : imageSize.height).toDouble();
-    final isImageWidthLonger = imageWidth > imageHeight;
+      debugPrint('image width: $imageWidth, height: $imageHeight');
+      if (isImageWidthLonger) {
+        // 이미지의 가로 길이가 세로 길이보다 크면
+        var ratio = deviceWidth / imageWidth;
+        painterWidth = deviceWidth; // 너비는 가로 길이 전체를 사용
+        painterHeight =
+            imageHeight * ratio; // 높이는 세로 길이를 화면 크기에 맞춰서 늘리거나 축소
 
-    processByWidth(
-      isImageWidthLonger,
-      deviceWidth,
-      imageWidth,
-      imageHeight,
-      file,
-      deviceHeight,
-    );
-  }
+        if (painterHeight > deviceHeight) {
+          // 세로 길이가 너무 길어서 화면 높이보다 길게 나온다면?
+          ratio = deviceHeight / painterHeight;
+          painterHeight = deviceHeight;
+          painterWidth = painterWidth * ratio;
+        }
 
-  void processByWidth(
-    bool isWidthLonger,
-    double deviceWidth,
-    double imageWidth,
-    double imageHeight,
-    File file,
-    double deviceHeight,
-  ) {
-    debugPrint('image width: $imageWidth, height: $imageHeight');
-    if (isWidthLonger) {
-      // 이미지의 가로 길이가 세로 길이보다 크면
-      var ratio = deviceWidth / imageWidth;
-      painterWidth = deviceWidth; // 너비는 가로 길이 전체를 사용
-      painterHeight =
-          imageHeight * ratio; // 높이는 세로 길이를 화면 크기에 맞춰서 늘리거나 축소
+        startMargin = (deviceWidth - painterWidth) / 2;
+        topMargin = (deviceHeight - painterHeight) / 2;
 
-      if (painterHeight > deviceHeight) {
-        // 세로 길이가 너무 길어서 화면 높이보다 길게 나온다면?
-        ratio = deviceHeight / painterHeight;
+        debugPrint('crop screen'
+            'width: $painterWidth, '
+            'height: $painterHeight, '
+            'startMargin: $startMargin, '
+            'topMargin: $topMargin');
+        getImage();
+      } else {
+        // 이미지의 세로 길이가 가로 길이보다 크면
+        var ratio = deviceHeight / imageHeight;
         painterHeight = deviceHeight;
-        painterWidth = painterWidth * ratio;
+        painterWidth = imageWidth * ratio;
+
+        if (painterWidth > deviceWidth) {
+          ratio = deviceWidth / painterWidth;
+          painterWidth = deviceWidth;
+          painterHeight = painterHeight * ratio;
+        }
+
+        startMargin = (deviceWidth - painterWidth) / 2;
+        topMargin = (deviceHeight - painterHeight) / 2;
+        debugPrint('crop screen'
+            'width: $painterWidth, '
+            'height: $painterHeight, '
+            'startMargin: $startMargin, '
+            'topMargin: $topMargin');
+        getImage();
       }
-
-      final startMargin = (deviceWidth - painterWidth) / 2;
-      final topMargin = (deviceHeight - painterHeight) / 2;
-
-      debugPrint('crop screen'
-          'width: $painterWidth, '
-          'height: $painterHeight, '
-          'startMargin: $startMargin, '
-          'topMargin: $topMargin');
-      getImage();
-    } else {
-      // 이미지의 세로 길이가 가로 길이보다 크면
-      var ratio = deviceHeight / imageHeight;
-      var painterHeight = deviceHeight;
-      var painterWidth = imageWidth * ratio;
-
-      if (painterWidth > deviceWidth) {
-        ratio = deviceWidth / painterWidth;
-        painterWidth = deviceWidth;
-        painterHeight = painterHeight * ratio;
-      }
-
-      final startMargin = (deviceWidth - painterWidth) / 2;
-      final topMargin = (deviceHeight - painterHeight) / 2;
-      debugPrint('crop screen'
-          'width: $painterWidth, '
-          'height: $painterHeight, '
-          'startMargin: $startMargin, '
-          'topMargin: $topMargin');
-      getImage();
-    }
+    });
   }
 
   void getImage() {
@@ -263,12 +237,6 @@ class _CropScreenState extends State<CropScreen> {
         key: painterKey,
         startMargin: startMargin,
         topMargin: topMargin,
-        cropCallback: (x, y, width, height) {
-          dx = x;
-          dy = y;
-          cropWidth = width;
-          cropHeight = height;
-        },
       );
     } else if (uiImage != null && shapeType == ShapeType.custom) {
       return Container(

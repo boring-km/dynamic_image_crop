@@ -18,7 +18,6 @@ class FigureCropPainter extends StatefulWidget {
     required this.topMargin,
     required this.startMargin,
     this.movingDotSize = 8,
-    required this.cropCallback,
   });
 
   final double painterWidth;
@@ -28,8 +27,6 @@ class FigureCropPainter extends StatefulWidget {
   final ui.Image uiImage;
   final double topMargin;
   final double startMargin;
-  final void Function(double x, double y, double width, double height)
-  cropCallback;
 
   @override
   State<FigureCropPainter> createState() => FigureCropPainterState();
@@ -70,12 +67,11 @@ class FigureCropPainterState extends State<FigureCropPainter> {
             onPanEnd: (details) => resetDragState(),
             onPanUpdate: (details) => setShapeMovement(details),
             onTapDown: (details) {
-              print('dx: ${details.globalPosition.dx - widget.startMargin},'
+              debugPrint('dx: ${details.globalPosition.dx - widget.startMargin},'
                   ' dy: ${details.globalPosition.dy - widget.topMargin}');
-              print('shape dx: $xPos, dy: $yPos');
+              debugPrint('shape dx: $xPos, dy: $yPos');
             },
             child: Builder(builder: (context) {
-              widget.cropCallback(xPos, yPos, shapeWidth, shapeHeight);
               if (shapeType == ShapeType.rectangle) {
                 return CustomPaint(
                   painter: RectanglePainter(
