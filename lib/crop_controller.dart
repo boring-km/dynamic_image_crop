@@ -52,7 +52,7 @@ class CropController {
 
       callback(imageFile.readAsBytesSync(), painterWidth, painterHeight);
       return;
-    } else if (shapeType == ShapeType.custom) {
+    } else if (shapeType == ShapeType.drawing) {
       // 직접 그리기
       final drawingArea = drawingKey.currentState!.getDrawingArea();
       xPos = drawingArea.left;
@@ -100,7 +100,7 @@ class CropController {
               canvas,
               Size(width, height),
             );
-          } else if (shapeType == ShapeType.custom) {
+          } else if (shapeType == ShapeType.drawing) {
             DrawingCropPainter(
               drawingKey.currentState!.points,
               drawingKey.currentState!.first,

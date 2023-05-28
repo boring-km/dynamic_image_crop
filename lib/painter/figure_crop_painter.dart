@@ -44,7 +44,8 @@ class FigureCropPainterState extends State<FigureCropPainter> {
   bool imageLoaded = false;
   bool isImageLoaded = false;
 
-  late ShapeType shapeType;
+  late ShapeType shapeType = widget.shapeType;
+  late final image = widget.uiImage;
 
   @override
   void initState() {
@@ -55,19 +56,24 @@ class FigureCropPainterState extends State<FigureCropPainter> {
 
   @override
   Widget build(BuildContext context) {
-    shapeType = widget.shapeType;
-
     return SizedBox(
       width: widget.painterWidth,
       height: widget.painterHeight,
       child: Stack(
         children: [
+          FutureBuilder(
+            future: image.toByteData(),
+            builder: (_, snapshot) {
+              return Image.memory(snapshot.data!.buffer.asUint8List());
+            },
+          ),
           GestureDetector(
             onPanStart: (details) => setPointDragState(details, context),
             onPanEnd: (details) => resetDragState(),
             onPanUpdate: (details) => setShapeMovement(details),
             onTapDown: (details) {
-              debugPrint('dx: ${details.globalPosition.dx - widget.startMargin},'
+              debugPrint(
+                  'dx: ${details.globalPosition.dx - widget.startMargin},'
                   ' dy: ${details.globalPosition.dy - widget.topMargin}');
               debugPrint('shape dx: $xPos, dy: $yPos');
             },

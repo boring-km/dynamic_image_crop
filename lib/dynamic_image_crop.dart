@@ -128,7 +128,7 @@ class _DynamicImageCropState extends State<DynamicImageCrop> {
         height: painterHeight,
         fit: BoxFit.cover,
       );
-    } else if (uiImage != null && controller.shapeType != ShapeType.custom) {
+    } else if (uiImage != null && controller.shapeType != ShapeType.drawing) {
       return FigureCropPainter(
         painterWidth: painterWidth,
         painterHeight: painterHeight,
@@ -138,13 +138,17 @@ class _DynamicImageCropState extends State<DynamicImageCrop> {
         startMargin: startMargin,
         topMargin: topMargin,
       );
-    } else if (uiImage != null && controller.shapeType == ShapeType.custom) {
+    } else if (uiImage != null && controller.shapeType == ShapeType.drawing) {
       return Container(
         color: Colors.transparent,
         width: painterWidth,
         height: painterHeight,
         child: CustomShape(
           uiImage!,
+          top: topMargin,
+          left: startMargin,
+          painterWidth: painterWidth,
+          painterHeight: painterHeight,
           key: drawingKey,
         ),
       );

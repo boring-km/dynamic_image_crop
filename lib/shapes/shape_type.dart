@@ -1,3 +1,3 @@
 enum ShapeType {
-  rectangle, circle, triangle, custom, none
+  rectangle, circle, triangle, drawing, none
 }

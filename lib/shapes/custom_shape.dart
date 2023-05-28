@@ -6,15 +6,30 @@ import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 
 class CustomShape extends StatefulWidget {
-  const CustomShape(this.uiImage, {Key? key}) : super(key: key);
+  const CustomShape(
+    this.uiImage, {
+    required this.top,
+    required this.left,
+    required this.painterWidth,
+    required this.painterHeight,
+    Key? key,
+  }) : super(key: key);
 
   final ui.Image uiImage;
+  final double top;
+  final double left;
+  final double painterWidth;
+  final double painterHeight;
 
   @override
   State<CustomShape> createState() => CustomShapeState();
 }
 
 class CustomShapeState extends State<CustomShape> {
+  late final top = widget.top;
+  late final left = widget.left;
+  late final painterWidth = widget.painterWidth;
+  late final painterHeight = widget.painterHeight;
 
   final List<Offset?> points = <Offset?>[];
   bool isFirst = true;
@@ -39,12 +54,18 @@ class CustomShapeState extends State<CustomShape> {
         });
       },
       onPanUpdate: (details) {
-        setState(() {
-          RenderBox? renderBox = context.findRenderObject() as RenderBox?;
-          if (renderBox != null) {
-            points.add(renderBox.globalToLocal(details.globalPosition));
-          }
-        });
+        final localPosition = details.localPosition;
+        final dx = localPosition.dx;
+        final dy = localPosition.dy;
+
+        if (0 <= dx && dx <= painterWidth && 0 <= dy && dy <= painterHeight) {
+          setState(() {
+            RenderBox? renderBox = context.findRenderObject() as RenderBox?;
+            if (renderBox != null) {
+              points.add(renderBox.globalToLocal(details.globalPosition));
+            }
+          });
+        }
       },
       onPanEnd: (details) {
         setState(() {

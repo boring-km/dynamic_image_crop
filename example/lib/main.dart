@@ -7,9 +7,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:dynamic_image_crop/crop_controller.dart';
 import 'package:dynamic_image_crop/dynamic_image_crop.dart';
 import 'package:dynamic_image_crop/shapes/shape_type.dart';
-import 'package:dynamic_image_crop_example/gen/assets.gen.dart';
-import 'package:dynamic_image_crop_example/screen/buttons/image_button.dart';
-import 'package:dynamic_image_crop_example/screen/buttons/toggle_image_button.dart';
 import 'package:dynamic_image_crop_example/screen/result_screen.dart';
 
 void main() {
@@ -112,6 +109,11 @@ class _CropScreenState extends State<CropScreen> {
 
     return Scaffold(
       backgroundColor: Colors.black,
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          controller.cropImage(context);
+        }, label: const Text('crop'),
+      ),
       body: Stack(
         children: [
           Center(
@@ -138,76 +140,7 @@ class _CropScreenState extends State<CropScreen> {
               child: Center(
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      ToggleImageButton(
-                        key: rectangleButtonKey,
-                        offImage: Assets.images.mBookBtnNemo.path,
-                        onImage: Assets.images.mBookBtnNemoSelected.path,
-                        width: 87,
-                        height: 73,
-                        onTap: (imageState) {
-                          setImageState(imageState, ShapeType.rectangle);
-                        },
-                      ),
-                      const SizedBox(height: 26),
-                      ToggleImageButton(
-                        key: circleButtonKey,
-                        offImage: Assets.images.mBookBtnCircle.path,
-                        onImage: Assets.images.mBookBtnCircleSelected.path,
-                        width: 87,
-                        height: 73,
-                        onTap: (imageState) {
-                          setImageState(imageState, ShapeType.circle);
-                        },
-                      ),
-                      const SizedBox(height: 26),
-                      ToggleImageButton(
-                        key: triangleButtonKey,
-                        offImage: Assets.images.mBookBtnTriangle.path,
-                        onImage: Assets.images.mBookBtnTriangleSelected.path,
-                        width: 87,
-                        height: 73,
-                        onTap: (imageState) {
-                          setImageState(imageState, ShapeType.triangle);
-                        },
-                      ),
-                      const SizedBox(height: 26),
-                      ToggleImageButton(
-                        key: drawingButtonKey,
-                        offImage: Assets.images.mBookBtnDrawing.path,
-                        onImage: Assets.images.mBookBtnDrawingSelected.path,
-                        width: 87,
-                        height: 73,
-                        onTap: (imageState) {
-                          setImageState(imageState, ShapeType.custom);
-                        },
-                      ),
-                      ImageButton(
-                        unpressedImage: Assets.images.mBookBtnCancel.path,
-                        pressedImage:
-                            Assets.images.mBookBtnCancelOverSelected.path,
-                        width: 76,
-                        height: 72,
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                      const SizedBox(width: 12),
-                      ImageButton(
-                        unpressedImage: Assets.images.mBookBtnImgcropSave.path,
-                        pressedImage:
-                            Assets.images.mBookBtnImgcropSaveSelected.path,
-                        width: 76,
-                        height: 72,
-                        onTap: () {
-                          controller.cropImage(context);
-                        },
-                      ),
-                    ],
-                  ),
+                  child: buildButtons(),
                 ),
               ),
             ),
@@ -217,105 +150,48 @@ class _CropScreenState extends State<CropScreen> {
     );
   }
 
-  final rectangleButtonKey = GlobalKey<ToggleImageButtonState>();
-  final circleButtonKey = GlobalKey<ToggleImageButtonState>();
-  final triangleButtonKey = GlobalKey<ToggleImageButtonState>();
-  final drawingButtonKey = GlobalKey<ToggleImageButtonState>();
-
-  Widget buildShapeButtons() {
+  Widget buildButtons() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.max,
       children: [
-        ToggleImageButton(
-          key: rectangleButtonKey,
-          offImage: Assets.images.mBookBtnNemo.path,
-          onImage: Assets.images.mBookBtnNemoSelected.path,
-          width: 87,
-          height: 73,
-          onTap: (imageState) {
-            setImageState(imageState, ShapeType.rectangle);
+        ElevatedButton(
+          onPressed: () {
+            changeShape(ShapeType.rectangle);
           },
+          child: const Text('Rect'),
         ),
-        const SizedBox(height: 26),
-        ToggleImageButton(
-          key: circleButtonKey,
-          offImage: Assets.images.mBookBtnCircle.path,
-          onImage: Assets.images.mBookBtnCircleSelected.path,
-          width: 87,
-          height: 73,
-          onTap: (imageState) {
-            setImageState(imageState, ShapeType.circle);
+        ElevatedButton(
+          onPressed: () {
+            changeShape(ShapeType.circle);
           },
+          child: const Text('Circle'),
         ),
-        const SizedBox(height: 26),
-        ToggleImageButton(
-          key: triangleButtonKey,
-          offImage: Assets.images.mBookBtnTriangle.path,
-          onImage: Assets.images.mBookBtnTriangleSelected.path,
-          width: 87,
-          height: 73,
-          onTap: (imageState) {
-            setImageState(imageState, ShapeType.triangle);
+        ElevatedButton(
+          onPressed: () {
+            changeShape(ShapeType.triangle);
           },
+          child: const Text('Triangle'),
         ),
-        const SizedBox(height: 26),
-        ToggleImageButton(
-          key: drawingButtonKey,
-          offImage: Assets.images.mBookBtnDrawing.path,
-          onImage: Assets.images.mBookBtnDrawingSelected.path,
-          width: 87,
-          height: 73,
-          onTap: (imageState) {
-            setImageState(imageState, ShapeType.custom);
+        ElevatedButton(
+          onPressed: () {
+            changeShape(ShapeType.drawing);
           },
+          child: const Text('Drawing'),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            changeShape(ShapeType.none);
+          },
+          child: const Text('cancel'),
         ),
       ],
     );
   }
 
-  void setImageState(bool imageState, ShapeType type) {
+  void changeShape(ShapeType type) {
     setState(() {
-      if (imageState) {
-        // 이미 켜져있는 버튼 닫기
-        if (shapeType != type) {
-          if (shapeType == ShapeType.rectangle) {
-            setRectangleState(!imageState);
-          } else if (shapeType == ShapeType.circle) {
-            setCircleState(!imageState);
-          } else if (shapeType == ShapeType.triangle) {
-            setTriangleState(!imageState);
-          } else if (shapeType == ShapeType.custom) {
-            setDrawingState(!imageState);
-          }
-        }
-        controller.changeType(type);
-      } else {
-        controller.changeType(ShapeType.none);
-      }
-    });
-  }
-
-  void setRectangleState(bool state) {
-    rectangleButtonKey.currentState!.setState(() {
-      rectangleButtonKey.currentState!.imageState = state;
-    });
-  }
-
-  void setCircleState(bool state) {
-    circleButtonKey.currentState!.setState(() {
-      circleButtonKey.currentState!.imageState = state;
-    });
-  }
-
-  void setTriangleState(bool state) {
-    triangleButtonKey.currentState!.setState(() {
-      triangleButtonKey.currentState!.imageState = state;
-    });
-  }
-
-  void setDrawingState(bool state) {
-    drawingButtonKey.currentState!.setState(() {
-      drawingButtonKey.currentState!.imageState = state;
+      controller.changeType(type);
     });
   }
 
