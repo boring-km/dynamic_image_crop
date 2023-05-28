@@ -75,7 +75,7 @@ class CustomShapeState extends State<CustomShape> {
       child: RepaintBoundary(
         key: globalKey,
         child: CustomPaint(
-          painter: DrawingPainter(points, first, widget.uiImage),
+          painter: DrawingPainter(points, first),
           child: Container(),
         ),
       ),

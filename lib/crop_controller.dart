@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:dynamic_image_crop/camera_utils.dart';
 import 'package:dynamic_image_crop/painter/drawing_painter.dart';
 import 'package:dynamic_image_crop/painter/figure_crop_painter.dart';
 import 'package:dynamic_image_crop/shapes/circle_painter.dart';
@@ -158,4 +157,25 @@ class CropController {
   void changeType(ShapeType type) {
     shapeType = type;
   }
+
+  Rect calculateCropArea({
+    required int? imageWidth,
+    required int? imageHeight,
+    required double viewWidth,
+    required double viewHeight,
+    required double left,
+    double top = 0.0,
+  }) {
+    if (imageWidth == null || imageHeight == null) {
+      return Rect.zero;
+    }
+    double height = imageHeight / viewHeight;
+    double width = imageWidth / viewWidth;
+
+    final fromLeft = left < 0 ? 0.0 : left / viewWidth;
+    final fromTop = top < 0 ? 0.0 : top / viewHeight;
+
+    return Rect.fromLTWH(fromLeft, fromTop, width, height);
+  }
+
 }

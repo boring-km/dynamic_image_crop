@@ -3,18 +3,15 @@ import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 
 class TrianglePainter extends CustomPainter {
-  TrianglePainter(this.rect, this.image);
+  TrianglePainter(this.rect);
 
   final Rect rect;
-  final ui.Image image;
 
   @override
   void paint(Canvas canvas, Size size) {
     final linePaint = Paint()
       ..color = guideColor
       ..strokeWidth = 1.0;
-
-    canvas.drawImage(image, const Offset(0, 0), Paint());
 
     canvas.drawLine(rect.bottomLeft, rect.topCenter, linePaint);
     canvas.drawLine(rect.topCenter, rect.bottomRight, linePaint);

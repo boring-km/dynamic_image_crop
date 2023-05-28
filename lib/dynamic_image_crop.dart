@@ -83,7 +83,7 @@ class _DynamicImageCropState extends State<DynamicImageCrop> {
             'height: $painterHeight, '
             'startMargin: $startMargin, '
             'topMargin: $topMargin');
-        getImage();
+        loadImage();
       } else {
         // 이미지의 세로 길이가 가로 길이보다 크면
         var ratio = deviceHeight / imageHeight;
@@ -103,70 +103,75 @@ class _DynamicImageCropState extends State<DynamicImageCrop> {
             'height: $painterHeight, '
             'startMargin: $startMargin, '
             'topMargin: $topMargin');
-        getImage();
+        loadImage();
       }
-    });
-  }
-
-  void getImage() {
-    imageFile.readAsBytes().then((imageBytes) {
-      loadImage(imageBytes, painterWidth, painterHeight).then((result) {
-        controller.set(painterWidth, painterHeight);
-        setState(() {
-          uiImage = result;
-        });
-      });
     });
   }
 
   @override
   Widget build(BuildContext context) {
     if (controller.shapeType == ShapeType.none) {
-      return Image.file(
-        imageFile,
-        width: painterWidth,
-        height: painterHeight,
-        fit: BoxFit.cover,
-      );
+      return backgroundImage();
     } else if (uiImage != null && controller.shapeType != ShapeType.drawing) {
-      return FigureCropPainter(
-        painterWidth: painterWidth,
-        painterHeight: painterHeight,
-        uiImage: uiImage!,
-        shapeType: controller.shapeType,
-        key: painterKey,
-        startMargin: startMargin,
-        topMargin: topMargin,
+      return Stack(
+        children: [
+          backgroundImage(),
+          FigureCropPainter(
+            painterWidth: painterWidth,
+            painterHeight: painterHeight,
+            uiImage: uiImage!,
+            shapeType: controller.shapeType,
+            key: painterKey,
+            startMargin: startMargin,
+            topMargin: topMargin,
+          ),
+        ],
       );
     } else if (uiImage != null && controller.shapeType == ShapeType.drawing) {
-      return Container(
-        color: Colors.transparent,
-        width: painterWidth,
-        height: painterHeight,
-        child: CustomShape(
-          uiImage!,
-          top: topMargin,
-          left: startMargin,
-          painterWidth: painterWidth,
-          painterHeight: painterHeight,
-          key: drawingKey,
-        ),
+      return Stack(
+        children: [
+          backgroundImage(),
+          Container(
+            color: Colors.transparent,
+            width: painterWidth,
+            height: painterHeight,
+            child: CustomShape(
+              uiImage!,
+              top: topMargin,
+              left: startMargin,
+              painterWidth: painterWidth,
+              painterHeight: painterHeight,
+              key: drawingKey,
+            ),
+          ),
+        ],
       );
     } else {
       return Container();
     }
   }
 
-  Future<ui.Image> loadImage(
-    Uint8List img,
-    double targetWidth,
-    double targetHeight,
-  ) async {
-    final codec = await ui.instantiateImageCodec(
-      img,
-      targetWidth: targetWidth.toInt(),
-      targetHeight: targetHeight.toInt(),
-    );
-    return (await codec.getNextFrame()).image;
+  Image backgroundImage() {
+    return Image.file(
+          imageFile,
+          width: painterWidth,
+          height: painterHeight,
+          fit: BoxFit.cover,
+        );
+  }
+
+  Future<void> loadImage() async {
+    imageFile.readAsBytes().then((imageBytes) async {
+      final codec = await ui.instantiateImageCodec(
+        imageBytes,
+        targetWidth: painterWidth.toInt(),
+        targetHeight: painterHeight.toInt(),
+      );
+      final result = (await codec.getNextFrame()).image;
+      controller.set(painterWidth, painterHeight);
+      setState(() {
+        uiImage = result;
+      });
+    });
   }
 }

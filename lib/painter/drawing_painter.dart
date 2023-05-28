@@ -3,16 +3,13 @@ import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 
 class DrawingPainter extends CustomPainter {
-  DrawingPainter(this.points, this.first, this.image);
+  DrawingPainter(this.points, this.first);
 
   final List<Offset?> points;
   final Offset? first;
-  final ui.Image image;
 
   @override
   void paint(Canvas canvas, Size size) {
-
-    canvas.drawImage(image, const Offset(0, 0), Paint());
 
     final paint = Paint()
       ..color = guideColor

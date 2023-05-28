@@ -3,10 +3,9 @@ import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 
 class CirclePainter extends CustomPainter {
-  CirclePainter(this.rect, this.image);
+  CirclePainter(this.rect);
 
   final Rect rect;
-  final ui.Image image;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -15,7 +14,6 @@ class CirclePainter extends CustomPainter {
       ..strokeWidth = 1.0
       ..style = PaintingStyle.stroke;
 
-    canvas.drawImage(image, const Offset(0, 0), Paint());
     canvas.drawOval(rect, linePaint);
   }
 

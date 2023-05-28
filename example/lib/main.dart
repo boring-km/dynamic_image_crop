@@ -7,7 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:dynamic_image_crop/crop_controller.dart';
 import 'package:dynamic_image_crop/dynamic_image_crop.dart';
 import 'package:dynamic_image_crop/shapes/shape_type.dart';
-import 'package:dynamic_image_crop_example/screen/result_screen.dart';
+import 'package:dynamic_image_crop_example/result_screen.dart';
 
 void main() {
   runApp(const TestApp());
@@ -190,6 +190,9 @@ class _CropScreenState extends State<CropScreen> {
   }
 
   void changeShape(ShapeType type) {
+    setState(() {
+      controller.changeType(ShapeType.none);
+    });
     setState(() {
       controller.changeType(type);
     });

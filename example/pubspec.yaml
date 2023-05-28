@@ -16,7 +16,7 @@ dependencies:
   cupertino_icons: ^1.0.2
 
   image_picker: ^0.8.7+5
-  camera: ^0.10.5
+  camera: ^0.10.5+2
   path_provider:
   image_crop: ^0.4.1
 
@@ -27,15 +27,7 @@ dev_dependencies:
 
   flutter_lints: ^2.0.0
   build_runner:
-  flutter_gen_runner:
-
-flutter_gen:
-  output: lib/gen/ # Optional (default: lib/gen/)
-  line_length: 80 # Optional (default: 80)
 
 flutter:
 
   uses-material-design: true
-
-  assets:
-    - images/

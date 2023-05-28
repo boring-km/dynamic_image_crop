@@ -61,12 +61,6 @@ class FigureCropPainterState extends State<FigureCropPainter> {
       height: widget.painterHeight,
       child: Stack(
         children: [
-          FutureBuilder(
-            future: image.toByteData(),
-            builder: (_, snapshot) {
-              return Image.memory(snapshot.data!.buffer.asUint8List());
-            },
-          ),
           GestureDetector(
             onPanStart: (details) => setPointDragState(details, context),
             onPanEnd: (details) => resetDragState(),
@@ -87,7 +81,6 @@ class FigureCropPainterState extends State<FigureCropPainter> {
                       shapeWidth,
                       shapeHeight,
                     ),
-                    widget.uiImage,
                   ),
                   child: Container(),
                 );
@@ -100,7 +93,6 @@ class FigureCropPainterState extends State<FigureCropPainter> {
                       shapeWidth,
                       shapeHeight,
                     ),
-                    widget.uiImage,
                   ),
                   child: Container(),
                 );
@@ -113,7 +105,6 @@ class FigureCropPainterState extends State<FigureCropPainter> {
                       shapeWidth,
                       shapeHeight,
                     ),
-                    widget.uiImage,
                   ),
                   child: Container(),
                 );
@@ -201,8 +192,8 @@ class FigureCropPainterState extends State<FigureCropPainter> {
     final dx = details.globalPosition.dx - widget.startMargin;
     final dy = details.globalPosition.dy - widget.topMargin;
 
-    print('drag: $dx, $dy');
-    print('shape: $xPos, $yPos');
+    debugPrint('drag: $dx, $dy');
+    debugPrint('shape: $xPos, $yPos');
 
     if (isPoint1Drag(dx, dy)) {
       isPoint1Dragging = true;

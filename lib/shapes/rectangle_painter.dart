@@ -1,12 +1,10 @@
 import 'package:dynamic_image_crop/colors.dart';
 import 'package:flutter/material.dart';
-import 'dart:ui' as ui;
 
 class RectanglePainter extends CustomPainter {
-  RectanglePainter(this.rect, this.image);
+  RectanglePainter(this.rect);
 
   final Rect rect;
-  final ui.Image image;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -14,7 +12,6 @@ class RectanglePainter extends CustomPainter {
       ..color = guideColor
       ..strokeWidth = 1.0;
 
-    canvas.drawImage(image, const Offset(0, 0), Paint());
     canvas.drawLine(rect.topLeft, rect.topRight, linePaint);
     canvas.drawLine(rect.topLeft, rect.bottomLeft, linePaint);
     canvas.drawLine(rect.bottomLeft, rect.bottomRight, linePaint);
