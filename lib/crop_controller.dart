@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:dynamic_image_crop/painter/drawing_painter.dart';
 import 'package:dynamic_image_crop/painter/figure_crop_painter.dart';
+import 'package:dynamic_image_crop/shape_type_notifier.dart';
 import 'package:dynamic_image_crop/shapes/circle_painter.dart';
 import 'package:dynamic_image_crop/shapes/custom_shape.dart';
 import 'package:dynamic_image_crop/shapes/shape_type.dart';
@@ -17,21 +18,20 @@ class CropController {
 
   double painterHeight = 0;
 
+  final shapeNotifier = ShapeTypeNotifier();
+
   late File imageFile;
-  late ShapeType shapeType;
   late Function callback;
   late GlobalKey<FigureCropPainterState> painterKey;
   late GlobalKey<CustomShapeState> drawingKey;
 
   void init({
     required File imageFile,
-    required ShapeType shapeType,
     required Function callback,
     required GlobalKey<FigureCropPainterState> painterKey,
     required GlobalKey<CustomShapeState> drawingKey,
   }) {
     this.imageFile = imageFile;
-    this.shapeType = shapeType;
     this.callback = callback;
     this.painterKey = painterKey;
     this.drawingKey = drawingKey;
@@ -46,12 +46,12 @@ class CropController {
     double shapeWidth;
     double shapeHeight;
 
-    if (shapeType == ShapeType.none) {
+    if (shapeNotifier.shapeType == ShapeType.none) {
       // 전체 이미지 사용
 
       callback(imageFile.readAsBytesSync(), painterWidth, painterHeight);
       return;
-    } else if (shapeType == ShapeType.drawing) {
+    } else if (shapeNotifier.shapeType == ShapeType.drawing) {
       // 직접 그리기
       final drawingArea = drawingKey.currentState!.getDrawingArea();
       xPos = drawingArea.left;
@@ -76,14 +76,14 @@ class CropController {
     );
 
     ImageCrop.cropImage(file: imageFile, area: area).then((file) {
-      if (shapeType == ShapeType.rectangle) {
+      if (shapeNotifier.shapeType == ShapeType.rectangle) {
         callback(file.readAsBytesSync(), shapeWidth, shapeHeight);
       } else {
         loadImage(file.readAsBytesSync(), shapeWidth, shapeHeight)
             .then((image) {
           final width = image.width.toDouble();
           final height = image.height.toDouble();
-          if (shapeType == ShapeType.circle) {
+          if (shapeNotifier.shapeType == ShapeType.circle) {
             CirclePainterForCrop(
               Rect.fromLTWH(0, 0, width, height),
               image,
@@ -91,7 +91,7 @@ class CropController {
               canvas,
               Size(width, height),
             );
-          } else if (shapeType == ShapeType.triangle) {
+          } else if (shapeNotifier.shapeType == ShapeType.triangle) {
             TrianglePainterForCrop(
               Rect.fromLTWH(0, 0, width, height),
               image,
@@ -99,7 +99,7 @@ class CropController {
               canvas,
               Size(width, height),
             );
-          } else if (shapeType == ShapeType.drawing) {
+          } else if (shapeNotifier.shapeType == ShapeType.drawing) {
             DrawingCropPainter(
               drawingKey.currentState!.points,
               drawingKey.currentState!.first,
@@ -155,7 +155,7 @@ class CropController {
   }
 
   void changeType(ShapeType type) {
-    shapeType = type;
+    shapeNotifier.set(type);
   }
 
   Rect calculateCropArea({

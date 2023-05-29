@@ -45,7 +45,6 @@ class _DynamicImageCropState extends State<DynamicImageCrop> {
   void initState() {
     controller.init(
       imageFile: imageFile,
-      shapeType: ShapeType.none,
       callback: callback,
       painterKey: painterKey,
       drawingKey: drawingKey,
@@ -78,11 +77,6 @@ class _DynamicImageCropState extends State<DynamicImageCrop> {
         startMargin = (deviceWidth - painterWidth) / 2;
         topMargin = (deviceHeight - painterHeight) / 2;
 
-        debugPrint('crop screen '
-            'width: $painterWidth, '
-            'height: $painterHeight, '
-            'startMargin: $startMargin, '
-            'topMargin: $topMargin');
         loadImage();
       } else {
         // 이미지의 세로 길이가 가로 길이보다 크면
@@ -98,11 +92,7 @@ class _DynamicImageCropState extends State<DynamicImageCrop> {
 
         startMargin = (deviceWidth - painterWidth) / 2;
         topMargin = (deviceHeight - painterHeight) / 2;
-        debugPrint('crop screen '
-            'width: $painterWidth, '
-            'height: $painterHeight, '
-            'startMargin: $startMargin, '
-            'topMargin: $topMargin');
+
         loadImage();
       }
     });
@@ -110,54 +100,62 @@ class _DynamicImageCropState extends State<DynamicImageCrop> {
 
   @override
   Widget build(BuildContext context) {
-    if (controller.shapeType == ShapeType.none) {
-      return backgroundImage();
-    } else if (uiImage != null && controller.shapeType != ShapeType.drawing) {
-      return Stack(
-        children: [
-          backgroundImage(),
-          FigureCropPainter(
-            painterWidth: painterWidth,
-            painterHeight: painterHeight,
-            uiImage: uiImage!,
-            shapeType: controller.shapeType,
-            key: painterKey,
-            startMargin: startMargin,
-            topMargin: topMargin,
-          ),
-        ],
-      );
-    } else if (uiImage != null && controller.shapeType == ShapeType.drawing) {
-      return Stack(
-        children: [
-          backgroundImage(),
-          Container(
-            color: Colors.transparent,
-            width: painterWidth,
-            height: painterHeight,
-            child: CustomShape(
-              uiImage!,
-              top: topMargin,
-              left: startMargin,
-              painterWidth: painterWidth,
-              painterHeight: painterHeight,
-              key: drawingKey,
-            ),
-          ),
-        ],
-      );
-    } else {
-      return Container();
-    }
+    return ListenableBuilder(
+      listenable: controller.shapeNotifier,
+      builder: (c, _) {
+        if (controller.shapeNotifier.shapeType == ShapeType.none) {
+          return backgroundImage();
+        }
+        if (uiImage != null &&
+            controller.shapeNotifier.shapeType != ShapeType.drawing) {
+          return Stack(
+            children: [
+              backgroundImage(),
+              FigureCropPainter(
+                painterWidth: painterWidth,
+                painterHeight: painterHeight,
+                uiImage: uiImage!,
+                shapeNotifier: controller.shapeNotifier,
+                key: painterKey,
+                startMargin: startMargin,
+                topMargin: topMargin,
+              ),
+            ],
+          );
+        }
+        if (uiImage != null &&
+            controller.shapeNotifier.shapeType == ShapeType.drawing) {
+          return Stack(
+            children: [
+              backgroundImage(),
+              Container(
+                color: Colors.transparent,
+                width: painterWidth,
+                height: painterHeight,
+                child: CustomShape(
+                  uiImage!,
+                  top: topMargin,
+                  left: startMargin,
+                  painterWidth: painterWidth,
+                  painterHeight: painterHeight,
+                  key: drawingKey,
+                ),
+              ),
+            ],
+          );
+        }
+        return Container();
+      },
+    );
   }
 
   Image backgroundImage() {
     return Image.file(
-          imageFile,
-          width: painterWidth,
-          height: painterHeight,
-          fit: BoxFit.cover,
-        );
+      imageFile,
+      width: painterWidth,
+      height: painterHeight,
+      fit: BoxFit.cover,
+    );
   }
 
   Future<void> loadImage() async {

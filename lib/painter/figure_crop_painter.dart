@@ -1,6 +1,7 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'dart:ui' as ui;
+import 'package:dynamic_image_crop/shape_type_notifier.dart';
 import 'package:dynamic_image_crop/shapes/circle_painter.dart';
 import 'package:dynamic_image_crop/shapes/rectangle_painter.dart';
 import 'package:dynamic_image_crop/shapes/shape_type.dart';
@@ -14,7 +15,7 @@ class FigureCropPainter extends StatefulWidget {
     required this.painterWidth,
     required this.painterHeight,
     required this.uiImage,
-    required this.shapeType,
+    required this.shapeNotifier,
     required this.topMargin,
     required this.startMargin,
     this.movingDotSize = 8,
@@ -23,7 +24,7 @@ class FigureCropPainter extends StatefulWidget {
   final double painterWidth;
   final double painterHeight;
   final double movingDotSize;
-  final ShapeType shapeType;
+  final ShapeTypeNotifier shapeNotifier;
   final ui.Image uiImage;
   final double topMargin;
   final double startMargin;
@@ -44,7 +45,7 @@ class FigureCropPainterState extends State<FigureCropPainter> {
   bool imageLoaded = false;
   bool isImageLoaded = false;
 
-  late ShapeType shapeType = widget.shapeType;
+  late ShapeTypeNotifier st = widget.shapeNotifier;
   late final image = widget.uiImage;
 
   @override
@@ -65,53 +66,50 @@ class FigureCropPainterState extends State<FigureCropPainter> {
             onPanStart: (details) => setPointDragState(details, context),
             onPanEnd: (details) => resetDragState(),
             onPanUpdate: (details) => setShapeMovement(details),
-            onTapDown: (details) {
-              debugPrint(
-                  'dx: ${details.globalPosition.dx - widget.startMargin},'
-                  ' dy: ${details.globalPosition.dy - widget.topMargin}');
-              debugPrint('shape dx: $xPos, dy: $yPos');
-            },
-            child: Builder(builder: (context) {
-              if (shapeType == ShapeType.rectangle) {
-                return CustomPaint(
-                  painter: RectanglePainter(
-                    Rect.fromLTWH(
-                      xPos + radius,
-                      yPos + radius,
-                      shapeWidth,
-                      shapeHeight,
+            child: ListenableBuilder(
+              listenable: st,
+              builder: (context, _) {
+                if (st.shapeType == ShapeType.rectangle) {
+                  return CustomPaint(
+                    painter: RectanglePainter(
+                      Rect.fromLTWH(
+                        xPos + radius,
+                        yPos + radius,
+                        shapeWidth,
+                        shapeHeight,
+                      ),
                     ),
-                  ),
-                  child: Container(),
-                );
-              } else if (shapeType == ShapeType.circle) {
-                return CustomPaint(
-                  painter: CirclePainter(
-                    Rect.fromLTWH(
-                      xPos + radius,
-                      yPos + radius,
-                      shapeWidth,
-                      shapeHeight,
+                    child: Container(),
+                  );
+                } else if (st.shapeType == ShapeType.circle) {
+                  return CustomPaint(
+                    painter: CirclePainter(
+                      Rect.fromLTWH(
+                        xPos + radius,
+                        yPos + radius,
+                        shapeWidth,
+                        shapeHeight,
+                      ),
                     ),
-                  ),
-                  child: Container(),
-                );
-              } else if (shapeType == ShapeType.triangle) {
-                return CustomPaint(
-                  painter: TrianglePainter(
-                    Rect.fromLTWH(
-                      xPos + radius,
-                      yPos + radius,
-                      shapeWidth,
-                      shapeHeight,
+                    child: Container(),
+                  );
+                } else if (st.shapeType == ShapeType.triangle) {
+                  return CustomPaint(
+                    painter: TrianglePainter(
+                      Rect.fromLTWH(
+                        xPos + radius,
+                        yPos + radius,
+                        shapeWidth,
+                        shapeHeight,
+                      ),
                     ),
-                  ),
-                  child: Container(),
-                );
-              } else {
-                return Container();
-              }
-            }),
+                    child: Container(),
+                  );
+                } else {
+                  return Container();
+                }
+              },
+            ),
           ),
           // on point 1,3,7,9
           MovePoint(xPos, yPos),
@@ -191,9 +189,6 @@ class FigureCropPainterState extends State<FigureCropPainter> {
   void setPointDragState(DragStartDetails details, BuildContext context) {
     final dx = details.globalPosition.dx - widget.startMargin;
     final dy = details.globalPosition.dy - widget.topMargin;
-
-    debugPrint('drag: $dx, $dy');
-    debugPrint('shape: $xPos, $yPos');
 
     if (isPoint1Drag(dx, dy)) {
       isPoint1Dragging = true;

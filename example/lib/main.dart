@@ -109,50 +109,58 @@ class _CropScreenState extends State<CropScreen> {
 
     return Scaffold(
       backgroundColor: Colors.black,
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          controller.cropImage(context);
-        }, label: const Text('crop'),
-      ),
-      body: Stack(
+      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
+      floatingActionButton: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                DynamicImageCrop(
-                  controller: controller,
-                  imageFile: imageFile,
-                  cropResult: (image, width, height) {
-                    sendResultImage(image, width, height, context);
-                  },
-                ),
-              ],
-            ),
+          FloatingActionButton.extended(
+            heroTag: '1',
+            onPressed: () {
+              controller.cropImage(context);
+            }, label: const Text('Crop'),
           ),
-          Positioned(
-            width: size.width,
-            bottom: 0,
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              color: const Color(0x66666666),
-              child: Center(
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: buildButtons(),
+          FloatingActionButton.extended(
+            heroTag: '2',
+            onPressed: () {
+              changeShape(ShapeType.none);
+            }, label: const Text('Cancel'),
+          ),
+        ],
+      ),
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Center(
+              child: DynamicImageCrop(
+                controller: controller,
+                imageFile: imageFile,
+                cropResult: (image, width, height) {
+                  sendResultImage(image, width, height, context);
+                },
+              ),
+            ),
+            Positioned(
+              width: size.width,
+              bottom: 0,
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                color: const Color(0x66666666),
+                child: Center(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: buildButtons(),
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   Widget buildButtons() {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.max,
       children: [
         ElevatedButton(
@@ -161,41 +169,33 @@ class _CropScreenState extends State<CropScreen> {
           },
           child: const Text('Rect'),
         ),
+        const SizedBox(width: 8),
         ElevatedButton(
           onPressed: () {
             changeShape(ShapeType.circle);
           },
           child: const Text('Circle'),
         ),
+        const SizedBox(width: 8),
         ElevatedButton(
           onPressed: () {
             changeShape(ShapeType.triangle);
           },
           child: const Text('Triangle'),
         ),
+        const SizedBox(width: 8),
         ElevatedButton(
           onPressed: () {
             changeShape(ShapeType.drawing);
           },
           child: const Text('Drawing'),
         ),
-        ElevatedButton(
-          onPressed: () {
-            changeShape(ShapeType.none);
-          },
-          child: const Text('cancel'),
-        ),
       ],
     );
   }
 
   void changeShape(ShapeType type) {
-    setState(() {
-      controller.changeType(ShapeType.none);
-    });
-    setState(() {
-      controller.changeType(type);
-    });
+    controller.changeType(type);
   }
 
   void sendResultImage(
