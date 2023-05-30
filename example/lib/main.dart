@@ -1,11 +1,12 @@
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:dynamic_image_crop/crop_controller.dart';
 import 'package:dynamic_image_crop/dynamic_image_crop.dart';
 import 'package:dynamic_image_crop/shapes/shape_type.dart';
 import 'package:dynamic_image_crop_example/result_screen.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
 import 'package:image_picker/image_picker.dart';
 
 void main() {
@@ -60,28 +61,36 @@ class _SelectViewState extends State<SelectView> {
       if (xFile != null) {
         final file = File(xFile.path);
         if (file.existsSync()) {
-          moveToCropScreen(file);
+          moveToCropScreen(file.readAsBytesSync());
         }
       }
     });
   }
 
   void pickImage() {
-    ImagePicker().pickImage(source: ImageSource.gallery).then((xFile) {
-      if (xFile != null) {
-        final file = File(xFile.path);
-        if (file.existsSync()) {
-          moveToCropScreen(file);
+    if (kIsWeb) {
+      // ImagePickerWeb.getImageAsBytes().then((value) {
+      //   if (value != null) {
+      //     moveToCropScreen(value);
+      //   }
+      // });
+    } else {
+      ImagePicker().pickImage(source: ImageSource.gallery).then((xFile) {
+        if (xFile != null) {
+          final file = File(xFile.path);
+          if (file.existsSync()) {
+            moveToCropScreen(file.readAsBytesSync());
+          }
         }
-      }
-    });
+      });
+    }
   }
 
-  void moveToCropScreen(File file) {
+  void moveToCropScreen(Uint8List imageList) {
     Navigator.push(
       context,
       MaterialPageRoute<dynamic>(
-        builder: (_) => CropScreen(file.readAsBytesSync()),
+        builder: (_) => CropScreen(imageList),
       ),
     );
   }
@@ -129,8 +138,7 @@ class _CropScreenState extends State<CropScreen> {
       body: SafeArea(
         child: Stack(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(16),
+            Center(
               child: DynamicImageCrop(
                 controller: controller,
                 imageList: imageList,
@@ -139,7 +147,7 @@ class _CropScreenState extends State<CropScreen> {
                 },
               ),
             ),
-            const Column(),
+            const Center(),
             Positioned(
               width: size.width,
               bottom: 0,

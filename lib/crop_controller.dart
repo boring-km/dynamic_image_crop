@@ -57,8 +57,19 @@ class CropController {
     );
 
     final decoded = await decodeImageFromList(image);
-    ui.Image result;
 
+    final pictureRecorder = ui.PictureRecorder();
+    final canvas = Canvas(pictureRecorder);
+
+    final cropWidth = rect.width * decoded.width;
+    final cropHeight = rect.height * decoded.height;
+
+    final cropCenter = Offset(
+      decoded.width.floorToDouble() * rect.center.dx, // 실제로 crop할 이미지의 width
+      decoded.height.floorToDouble() * rect.center.dy, // 실제로 crop할 이미지의 height
+    );
+
+    ui.Image result;
     if (shapeType == ShapeType.drawing) {
       result = await getDrawingImage(
         crop: rect,
@@ -67,7 +78,11 @@ class CropController {
       );
     } else {
       result = await getCropImage(
-        crop: rect,
+        pictureRecorder: pictureRecorder,
+        canvas: canvas,
+        cropCenter: cropCenter,
+        cropWidth: cropWidth,
+        cropHeight: cropHeight,
         image: decoded,
         shapeType: shapeType,
         area: area,
@@ -85,39 +100,31 @@ class CropController {
   }
 
   static Future<ui.Image> getCropImage({
-    required Rect crop,
+    required ui.PictureRecorder pictureRecorder,
+    required ui.Canvas canvas,
+    required Offset cropCenter,
+    required double cropWidth,
+    required double cropHeight,
     required ui.Image image,
     required ShapeType shapeType,
     required CropArea area,
-    double? maxSize,
-    ui.FilterQuality quality = FilterQuality.high,
   }) async {
-    final pictureRecorder = ui.PictureRecorder();
-    final canvas = Canvas(pictureRecorder);
-
-    final cropWidth = crop.width * image.width;
-    final cropHeight = crop.height * image.height;
-
-    final cropCenter = Offset(
-      image.width.toDouble() * crop.center.dx,
-      image.height.toDouble() * crop.center.dy,
-    );
-
+    // ShapeType에 따라서 다른 Painter를 사용
     if (shapeType == ShapeType.rectangle) {
       RectanglePainterForCrop(
-        Rect.fromLTWH(area.left, area.top, cropWidth, cropHeight),
+        Rect.fromLTWH(0, 0, cropWidth, cropHeight),
         cropCenter,
         image,
       ).paint(canvas, Size(cropWidth, cropHeight));
     } else if (shapeType == ShapeType.circle) {
       CirclePainterForCrop(
-        Rect.fromLTWH(area.left, area.top, cropWidth, cropHeight),
+        Rect.fromLTWH(0, 0, cropWidth, cropHeight),
         cropCenter,
         image,
       ).paint(canvas, Size(cropWidth, cropHeight));
     } else if (shapeType == ShapeType.triangle) {
       TrianglePainterForCrop(
-        Rect.fromLTWH(area.left, area.top, cropWidth, cropHeight),
+        Rect.fromLTWH(0, 0, cropWidth, cropHeight),
         cropCenter,
         image,
       ).paint(canvas, Size(cropWidth, cropHeight));
@@ -125,7 +132,7 @@ class CropController {
       throw Exception('Unknown shape type');
     }
 
-    //FIXME Picture.toImage() crashes on Flutter Web with the HTML renderer. Use CanvasKit or avoid this operation for now. https://github.com/flutter/engine/pull/20750
+    // html 렌더링을 사용하는 Web에서는 Picture.toImage()가 작동하지 않음
     return pictureRecorder
         .endRecording()
         .toImage(cropWidth.round(), cropHeight.round());
@@ -153,7 +160,7 @@ class CropController {
       Size(cropWidth, cropHeight),
     );
 
-    //FIXME Picture.toImage() crashes on Flutter Web with the HTML renderer. Use CanvasKit or avoid this operation for now. https://github.com/flutter/engine/pull/20750
+    // html 렌더링을 사용하는 Web에서는 Picture.toImage()가 작동하지 않음
     return pictureRecorder
         .endRecording()
         .toImage(cropWidth.round(), cropHeight.round());
@@ -170,6 +177,10 @@ class CropController {
     final fromTop = area.top < 0 ? 0.0 : area.top / imageSize.height;
 
     return Rect.fromLTWH(fromLeft, fromTop, width, height);
+  }
+
+  ui.Size getRatio(ui.Image image, Size painterSize) {
+    return Size(image.width / painterSize.width, image.height / painterSize.height);
   }
 
   void changeType(ShapeType type) {

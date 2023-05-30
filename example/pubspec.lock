@@ -383,6 +383,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.6.2"
+  image_picker_web:
+    dependency: "direct main"
+    description:
+      name: image_picker_web
+      sha256: "1185be1cf3cf2ccd99be3f2fd451647147fe512f09db0aad894438ab95a984eb"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.0+1"
   io:
     dependency: transitive
     description:
