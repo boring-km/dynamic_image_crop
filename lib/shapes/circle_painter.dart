@@ -1,6 +1,7 @@
+import 'dart:ui' as ui;
+
 import 'package:dynamic_image_crop/colors.dart';
 import 'package:flutter/material.dart';
-import 'dart:ui' as ui;
 
 class CirclePainter extends CustomPainter {
   CirclePainter(this.rect);
@@ -22,18 +23,28 @@ class CirclePainter extends CustomPainter {
 }
 
 class CirclePainterForCrop extends CustomPainter {
-  CirclePainterForCrop(this.rect, this.image);
+  CirclePainterForCrop(this.rect, this.center, this.image);
 
   final Rect rect;
+  final Offset center;
   final ui.Image image;
 
   @override
   void paint(Canvas canvas, Size size) {
-    final path = Path()
-      ..addOval(rect);
+    final path = Path()..addOval(rect);
 
-    canvas.clipPath(path);
-    canvas.drawImage(image, const Offset(0, 0), Paint());
+    canvas
+      ..clipPath(path)
+      ..drawImageRect(
+        image,
+        Rect.fromCenter(
+          center: center,
+          width: rect.width,
+          height: rect.height,
+        ),
+        Rect.fromLTWH(0, 0, rect.width, rect.height),
+        Paint()..filterQuality = FilterQuality.high,
+      );
   }
 
   @override

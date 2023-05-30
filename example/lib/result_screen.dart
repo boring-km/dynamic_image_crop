@@ -3,12 +3,12 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 
 class ResultScreen extends StatefulWidget {
-  const ResultScreen(
-      {Key? key,
-      required this.image,
-      required this.width,
-      required this.height})
-      : super(key: key);
+  const ResultScreen({
+    required this.image,
+    required this.width,
+    required this.height,
+    super.key,
+  });
 
   final Uint8List image;
 

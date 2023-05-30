@@ -1,13 +1,12 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-
 import 'package:dynamic_image_crop/crop_controller.dart';
 import 'package:dynamic_image_crop/dynamic_image_crop.dart';
 import 'package:dynamic_image_crop/shapes/shape_type.dart';
 import 'package:dynamic_image_crop_example/result_screen.dart';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 void main() {
   runApp(const TestApp());
@@ -31,7 +30,7 @@ class _TestAppState extends State<TestApp> {
 }
 
 class SelectView extends StatefulWidget {
-  const SelectView({Key? key}) : super(key: key);
+  const SelectView({super.key});
 
   @override
   State<SelectView> createState() => _SelectViewState();
@@ -81,17 +80,17 @@ class _SelectViewState extends State<SelectView> {
   void moveToCropScreen(File file) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (_) => CropScreen(file),
+      MaterialPageRoute<dynamic>(
+        builder: (_) => CropScreen(file.readAsBytesSync()),
       ),
     );
   }
 }
 
 class CropScreen extends StatefulWidget {
-  const CropScreen(this.resultFile, {super.key});
+  const CropScreen(this.imageList, {super.key});
 
-  final File resultFile;
+  final Uint8List imageList;
 
   @override
   State<CropScreen> createState() => _CropScreenState();
@@ -99,7 +98,7 @@ class CropScreen extends StatefulWidget {
 
 class _CropScreenState extends State<CropScreen> {
   ShapeType shapeType = ShapeType.none;
-  late final imageFile = widget.resultFile;
+  late final imageList = widget.imageList;
 
   final controller = CropController();
 
@@ -115,30 +114,32 @@ class _CropScreenState extends State<CropScreen> {
         children: [
           FloatingActionButton.extended(
             heroTag: '1',
-            onPressed: () {
-              controller.cropImage(context);
-            }, label: const Text('Crop'),
+            onPressed: controller.cropImage,
+            label: const Text('Crop'),
           ),
           FloatingActionButton.extended(
             heroTag: '2',
             onPressed: () {
               changeShape(ShapeType.none);
-            }, label: const Text('Cancel'),
+            },
+            label: const Text('Cancel'),
           ),
         ],
       ),
       body: SafeArea(
         child: Stack(
           children: [
-            Center(
+            Padding(
+              padding: const EdgeInsets.all(16),
               child: DynamicImageCrop(
                 controller: controller,
-                imageFile: imageFile,
+                imageList: imageList,
                 cropResult: (image, width, height) {
                   sendResultImage(image, width, height, context);
                 },
               ),
             ),
+            const Column(),
             Positioned(
               width: size.width,
               bottom: 0,
@@ -161,7 +162,6 @@ class _CropScreenState extends State<CropScreen> {
 
   Widget buildButtons() {
     return Row(
-      mainAxisSize: MainAxisSize.max,
       children: [
         ElevatedButton(
           onPressed: () {
@@ -207,9 +207,12 @@ class _CropScreenState extends State<CropScreen> {
     if (bytes != null) {
       Navigator.push(
         context,
-        MaterialPageRoute(
+        MaterialPageRoute<dynamic>(
           builder: (_) => ResultScreen(
-              image: bytes, width: shapeWidth, height: shapeHeight),
+            image: bytes,
+            width: shapeWidth,
+            height: shapeHeight,
+          ),
         ),
       );
     }

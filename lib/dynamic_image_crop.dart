@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -7,60 +8,113 @@ import 'package:dynamic_image_crop/painter/figure_crop_painter.dart';
 import 'package:dynamic_image_crop/shapes/custom_shape.dart';
 import 'package:dynamic_image_crop/shapes/shape_type.dart';
 import 'package:flutter/material.dart';
-import 'dart:ui' as ui;
 
 class DynamicImageCrop extends StatefulWidget {
   const DynamicImageCrop({
-    required this.imageFile,
+    required this.imageList,
     required this.controller,
     required this.cropResult,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
-  final File imageFile;
+  DynamicImageCrop.fromFile({
+    required File imageFile,
+    required this.controller,
+    required this.cropResult,
+    super.key,
+  }) : imageList = imageFile.readAsBytesSync();
+
+  final Uint8List imageList;
   final CropController controller;
-  final Function(Uint8List image, double width, double height) cropResult;
+  final void Function(Uint8List resultImage, double width, double height)
+      cropResult;
 
   @override
   State<DynamicImageCrop> createState() => _DynamicImageCropState();
 }
 
 class _DynamicImageCropState extends State<DynamicImageCrop> {
-  late final imageFile = widget.imageFile;
+  late final image = widget.imageList;
   late final callback = widget.cropResult;
   late final controller = widget.controller;
 
   double painterWidth = 0;
   double painterHeight = 0;
 
-  ui.Image? uiImage;
-
-  double topMargin = 0;
-  double startMargin = 0;
-
+  final myKey = GlobalKey();
   final painterKey = GlobalKey<FigureCropPainterState>();
   final drawingKey = GlobalKey<CustomShapeState>();
+
+  Size? imageSize;
 
   @override
   void initState() {
     controller.init(
-      imageFile: imageFile,
+      image: image,
       callback: callback,
       painterKey: painterKey,
       drawingKey: drawingKey,
     );
-    Future.microtask(() {
-      getImageFromFile(imageFile);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getImageInfo(image);
     });
     super.initState();
   }
 
-  void getImageFromFile(File file) async {
-    final (deviceWidth, deviceHeight) = ImageUtils.getDeviceSize(context);
-    ImageUtils.getImageSize(file, (imageWidth, imageHeight) {
+  @override
+  Widget build(BuildContext context) {
+    return ListenableBuilder(
+      key: myKey,
+      listenable: controller.shapeNotifier,
+      builder: (c, _) {
+        if (controller.shapeNotifier.shapeType == ShapeType.none) {
+          return backgroundImage();
+        }
+        if (imageSize == null) return Container();
+        if (controller.shapeNotifier.shapeType == ShapeType.drawing) {
+          return Stack(
+            children: [
+              backgroundImage(),
+              CustomShape(
+                painterWidth: imageSize!.width,
+                painterHeight: imageSize!.height,
+                key: drawingKey,
+              ),
+            ],
+          );
+        }
+        return Stack(
+          children: [
+            backgroundImage(),
+            FigureCropPainter(
+              painterWidth: imageSize!.width,
+              painterHeight: imageSize!.height,
+              shapeNotifier: controller.shapeNotifier,
+              key: painterKey,
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Image backgroundImage() {
+    return Image.memory(
+      image,
+      width: painterWidth,
+      height: painterHeight,
+      fit: BoxFit.cover,
+    );
+  }
+
+  Future<void> getImageInfo(Uint8List image) async {
+    final s = ImageUtils.getPainterSize(context);
+    final deviceWidth = s.width;
+    final deviceHeight = s.height;
+
+    await ImageUtils.getImageSize(image, (imageWidth, imageHeight) async {
       final isImageWidthLonger = imageWidth > imageHeight;
 
-      debugPrint('image width: $imageWidth, height: $imageHeight');
       if (isImageWidthLonger) {
         // 이미지의 가로 길이가 세로 길이보다 크면
         var ratio = deviceWidth / imageWidth;
@@ -73,11 +127,6 @@ class _DynamicImageCropState extends State<DynamicImageCrop> {
           painterHeight = deviceHeight;
           painterWidth = painterWidth * ratio;
         }
-
-        startMargin = (deviceWidth - painterWidth) / 2;
-        topMargin = (deviceHeight - painterHeight) / 2;
-
-        loadImage();
       } else {
         // 이미지의 세로 길이가 가로 길이보다 크면
         var ratio = deviceHeight / imageHeight;
@@ -89,87 +138,23 @@ class _DynamicImageCropState extends State<DynamicImageCrop> {
           painterWidth = deviceWidth;
           painterHeight = painterHeight * ratio;
         }
-
-        startMargin = (deviceWidth - painterWidth) / 2;
-        topMargin = (deviceHeight - painterHeight) / 2;
-
-        loadImage();
       }
+      controller.set(painterWidth, painterHeight);
+      setState(() {});
+      getSizeAfterRenderImage();
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return ListenableBuilder(
-      listenable: controller.shapeNotifier,
-      builder: (c, _) {
-        if (controller.shapeNotifier.shapeType == ShapeType.none) {
-          return backgroundImage();
+  void getSizeAfterRenderImage() {
+    Future<dynamic>.delayed(const Duration(milliseconds: 300)).then((value) {
+      if (myKey.currentContext != null) {
+        final renderBox =
+            myKey.currentContext!.findRenderObject() as RenderBox?;
+        if (renderBox != null) {
+          imageSize = renderBox.size;
+          debugPrint('size: $imageSize');
         }
-        if (uiImage != null &&
-            controller.shapeNotifier.shapeType != ShapeType.drawing) {
-          return Stack(
-            children: [
-              backgroundImage(),
-              FigureCropPainter(
-                painterWidth: painterWidth,
-                painterHeight: painterHeight,
-                uiImage: uiImage!,
-                shapeNotifier: controller.shapeNotifier,
-                key: painterKey,
-                startMargin: startMargin,
-                topMargin: topMargin,
-              ),
-            ],
-          );
-        }
-        if (uiImage != null &&
-            controller.shapeNotifier.shapeType == ShapeType.drawing) {
-          return Stack(
-            children: [
-              backgroundImage(),
-              Container(
-                color: Colors.transparent,
-                width: painterWidth,
-                height: painterHeight,
-                child: CustomShape(
-                  uiImage!,
-                  top: topMargin,
-                  left: startMargin,
-                  painterWidth: painterWidth,
-                  painterHeight: painterHeight,
-                  key: drawingKey,
-                ),
-              ),
-            ],
-          );
-        }
-        return Container();
-      },
-    );
-  }
-
-  Image backgroundImage() {
-    return Image.file(
-      imageFile,
-      width: painterWidth,
-      height: painterHeight,
-      fit: BoxFit.cover,
-    );
-  }
-
-  Future<void> loadImage() async {
-    imageFile.readAsBytes().then((imageBytes) async {
-      final codec = await ui.instantiateImageCodec(
-        imageBytes,
-        targetWidth: painterWidth.toInt(),
-        targetHeight: painterHeight.toInt(),
-      );
-      final result = (await codec.getNextFrame()).image;
-      controller.set(painterWidth, painterHeight);
-      setState(() {
-        uiImage = result;
-      });
+      }
     });
   }
 }

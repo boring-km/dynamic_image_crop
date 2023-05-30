@@ -1,17 +1,17 @@
 name: dynamic_image_crop
 description: flutter dynamic image crop plugin
 version: 0.0.1
-homepage:
+homepage: https://github.com/boring-km/dynamic_image_crop
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: '>=2.17.0 <4.0.0'
   flutter: ">=2.5.0"
 
 dependencies:
   flutter:
     sdk: flutter
   plugin_platform_interface: ^2.1.4
-  image_crop: ^0.4.1
+  very_good_analysis:
 
 dev_dependencies:
   flutter_test:

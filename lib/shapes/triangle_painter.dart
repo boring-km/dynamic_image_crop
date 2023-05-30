@@ -13,9 +13,10 @@ class TrianglePainter extends CustomPainter {
       ..color = guideColor
       ..strokeWidth = 1.0;
 
-    canvas.drawLine(rect.bottomLeft, rect.topCenter, linePaint);
-    canvas.drawLine(rect.topCenter, rect.bottomRight, linePaint);
-    canvas.drawLine(rect.bottomRight, rect.bottomLeft, linePaint);
+    canvas
+      ..drawLine(rect.bottomLeft, rect.topCenter, linePaint)
+      ..drawLine(rect.topCenter, rect.bottomRight, linePaint)
+      ..drawLine(rect.bottomRight, rect.bottomLeft, linePaint);
   }
 
   @override
@@ -23,25 +24,34 @@ class TrianglePainter extends CustomPainter {
 }
 
 class TrianglePainterForCrop extends CustomPainter {
-  TrianglePainterForCrop(this.rect, this.image);
+  TrianglePainterForCrop(this.rect, this.center, this.image);
 
   final Rect rect;
+  final Offset center;
   final ui.Image image;
 
   @override
   void paint(Canvas canvas, Size size) {
-
-    var path = Path()
+    final path = Path()
       ..moveTo(rect.bottomLeft.dx, rect.bottomLeft.dy)
       ..lineTo(rect.topCenter.dx, rect.topCenter.dy)
       ..lineTo(rect.bottomRight.dx, rect.bottomRight.dy)
       ..lineTo(rect.bottomLeft.dx, rect.bottomLeft.dy);
 
-    canvas.clipPath(path);
-    canvas.drawImage(image, const Offset(0, 0), Paint());
+    canvas
+      ..clipPath(path)
+      ..drawImageRect(
+        image,
+        Rect.fromCenter(
+          center: center,
+          width: rect.width,
+          height: rect.height,
+        ),
+        Rect.fromLTWH(0, 0, rect.width, rect.height),
+        Paint()..filterQuality = FilterQuality.high,
+      );
   }
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => true;
 }
-

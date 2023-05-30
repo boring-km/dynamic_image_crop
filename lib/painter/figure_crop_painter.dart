@@ -1,6 +1,6 @@
 // ignore_for_file: non_constant_identifier_names
 
-import 'dart:ui' as ui;
+import 'package:dynamic_image_crop/painter/drawing_area.dart';
 import 'package:dynamic_image_crop/shape_type_notifier.dart';
 import 'package:dynamic_image_crop/shapes/circle_painter.dart';
 import 'package:dynamic_image_crop/shapes/rectangle_painter.dart';
@@ -11,13 +11,10 @@ import 'package:flutter/material.dart';
 
 class FigureCropPainter extends StatefulWidget {
   const FigureCropPainter({
-    super.key,
     required this.painterWidth,
     required this.painterHeight,
-    required this.uiImage,
     required this.shapeNotifier,
-    required this.topMargin,
-    required this.startMargin,
+    super.key,
     this.movingDotSize = 8,
   });
 
@@ -25,19 +22,16 @@ class FigureCropPainter extends StatefulWidget {
   final double painterHeight;
   final double movingDotSize;
   final ShapeTypeNotifier shapeNotifier;
-  final ui.Image uiImage;
-  final double topMargin;
-  final double startMargin;
 
   @override
   State<FigureCropPainter> createState() => FigureCropPainterState();
 }
 
 class FigureCropPainterState extends State<FigureCropPainter> {
-  var xPos = 0.0;
-  var yPos = 0.0;
-  double shapeWidth = 200.0;
-  double shapeHeight = 200.0;
+  double xPos = 0;
+  double yPos = 0;
+  double shapeWidth = 200;
+  double shapeHeight = 200;
   bool isShapeDragging = false;
   late double pointerSize = widget.movingDotSize;
   late double radius = widget.movingDotSize / 2;
@@ -46,7 +40,6 @@ class FigureCropPainterState extends State<FigureCropPainter> {
   bool isImageLoaded = false;
 
   late ShapeTypeNotifier st = widget.shapeNotifier;
-  late final image = widget.uiImage;
 
   @override
   void initState() {
@@ -65,7 +58,7 @@ class FigureCropPainterState extends State<FigureCropPainter> {
           GestureDetector(
             onPanStart: (details) => setPointDragState(details, context),
             onPanEnd: (details) => resetDragState(),
-            onPanUpdate: (details) => setShapeMovement(details),
+            onPanUpdate: setShapeMovement,
             child: ListenableBuilder(
               listenable: st,
               builder: (context, _) {
@@ -187,8 +180,8 @@ class FigureCropPainterState extends State<FigureCropPainter> {
   }
 
   void setPointDragState(DragStartDetails details, BuildContext context) {
-    final dx = details.globalPosition.dx - widget.startMargin;
-    final dy = details.globalPosition.dy - widget.topMargin;
+    final dx = details.localPosition.dx;
+    final dy = details.localPosition.dy;
 
     if (isPoint1Drag(dx, dy)) {
       isPoint1Dragging = true;
@@ -306,5 +299,9 @@ class FigureCropPainterState extends State<FigureCropPainter> {
         ),
       ),
     );
+  }
+
+  CropArea getPainterArea() {
+    return CropArea(xPos, yPos, shapeWidth, shapeHeight);
   }
 }
