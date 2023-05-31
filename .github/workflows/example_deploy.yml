@@ -17,8 +17,11 @@ jobs:
           channel: 'stable'
       - run: flutter --version
       - run: flutter config --enable-web
-      - run: cd example && flutter pub get
-      - run: flutter build web --release
+      - run: |
+          # 1. build flutter web 
+          cd example
+          flutter pub get
+          flutter build web --release
       - run: |
           # 2. change path to [existed lib/main.dart path]/build/web
           cd ./example/build/web
