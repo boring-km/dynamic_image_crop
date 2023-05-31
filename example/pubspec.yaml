@@ -15,15 +15,12 @@ dependencies:
 
   cupertino_icons: ^1.0.2
 
-  path_provider:
-  very_good_analysis:
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
   flutter_lints: ^2.0.0
-  build_runner:
+  very_good_analysis: ^5.0.0+1
 
 flutter:
   uses-material-design: true

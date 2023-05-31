@@ -47,14 +47,13 @@
         serviceWorker: {
           serviceWorkerVersion: serviceWorkerVersion,
         },
-        onEntrypointLoaded: function(engineInitializer) {
+        onEntrypointLoaded: async function(engineInitializer) {
           let config = {
             renderer: "canvaskit",
           }
 
-          engineInitializer.initializeEngine(config).then(function(appRunner) {
-            appRunner.runApp();
-          });
+          let appRunner = await engineInitializer.initializeEngine(config);
+          await appRunner.runApp();
         }
       });
     });
