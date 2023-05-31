@@ -1,13 +1,14 @@
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
-import 'package:dynamic_image_crop/drawing_area.dart';
-import 'package:dynamic_image_crop/painter/drawing_painter.dart';
+import 'package:dynamic_image_crop/crop_area.dart';
+import 'package:dynamic_image_crop/image_change_notifier.dart';
 import 'package:dynamic_image_crop/painter/figure_shape_view.dart';
 
 import 'package:dynamic_image_crop/shape_type_notifier.dart';
 import 'package:dynamic_image_crop/shapes/circle_painter.dart';
 import 'package:dynamic_image_crop/shapes/custom_shape.dart';
+import 'package:dynamic_image_crop/shapes/drawing_painter.dart';
 import 'package:dynamic_image_crop/shapes/rectangle_painter.dart';
 import 'package:dynamic_image_crop/shapes/shape_type.dart';
 import 'package:dynamic_image_crop/shapes/triangle_painter.dart';
@@ -18,8 +19,8 @@ class CropController {
   double painterHeight = 0;
 
   final shapeNotifier = ShapeTypeNotifier();
+  final imageNotifier = ImageChangeNotifier();
 
-  late Uint8List image;
   late void Function(Uint8List, int, int) callback;
   late GlobalKey<FigureShapeViewState> painterKey;
   late GlobalKey<CustomShapeState> drawingKey;
@@ -30,7 +31,7 @@ class CropController {
     required GlobalKey<FigureShapeViewState> painterKey,
     required GlobalKey<CustomShapeState> drawingKey,
   }) {
-    this.image = image;
+    imageNotifier.set(image);
     this.callback = callback;
     this.painterKey = painterKey;
     this.drawingKey = drawingKey;
@@ -39,13 +40,17 @@ class CropController {
   void cropImage() {
     final shapeType = shapeNotifier.shapeType;
     if (shapeType == ShapeType.none) {
-      callback(image, painterWidth.floor(), painterHeight.floor());
+      callback(imageNotifier.image, painterWidth.floor(), painterHeight.floor());
     } else {
       final area = shapeType == ShapeType.drawing
           ? drawingKey.currentState!.getDrawingArea()
           : painterKey.currentState!.getPainterArea();
       callbackToParentWidget(area, shapeType);
     }
+  }
+
+  void changeImage(Uint8List image) {
+    imageNotifier.set(image);
   }
 
   Future<void> callbackToParentWidget(
@@ -57,7 +62,7 @@ class CropController {
       imageSize: Size(painterWidth, painterHeight),
     );
 
-    final decoded = await decodeImageFromList(image);
+    final decoded = await decodeImageFromList(imageNotifier.image);
 
     final pictureRecorder = ui.PictureRecorder();
     final canvas = Canvas(pictureRecorder);

@@ -1,6 +1,6 @@
 // ignore_for_file: non_constant_identifier_names
 
-import 'package:dynamic_image_crop/drawing_area.dart';
+import 'package:dynamic_image_crop/crop_area.dart';
 import 'package:dynamic_image_crop/shape_type_notifier.dart';
 import 'package:dynamic_image_crop/shapes/circle_painter.dart';
 import 'package:dynamic_image_crop/shapes/rectangle_painter.dart';
@@ -14,6 +14,8 @@ class FigureShapeView extends StatefulWidget {
     required this.painterWidth,
     required this.painterHeight,
     required this.shapeNotifier,
+    required this.lineColor,
+    required this.strokeWidth,
     super.key,
     this.movingDotSize = 8,
   });
@@ -22,6 +24,8 @@ class FigureShapeView extends StatefulWidget {
   final double painterHeight;
   final double movingDotSize;
   final ShapeTypeNotifier shapeNotifier;
+  final Color lineColor;
+  final double strokeWidth;
 
   @override
   State<FigureShapeView> createState() => FigureShapeViewState();
@@ -33,13 +37,15 @@ class FigureShapeViewState extends State<FigureShapeView> {
   double shapeWidth = 200;
   double shapeHeight = 200;
   bool isShapeDragging = false;
+
+  late final lineColor = widget.lineColor;
+  late double strokeWidth = widget.strokeWidth;
   late double pointerSize = widget.movingDotSize;
   late double radius = widget.movingDotSize / 2;
+  late ShapeTypeNotifier st = widget.shapeNotifier;
 
   bool imageLoaded = false;
   bool isImageLoaded = false;
-
-  late ShapeTypeNotifier st = widget.shapeNotifier;
 
   @override
   void initState() {
@@ -71,6 +77,8 @@ class FigureShapeViewState extends State<FigureShapeView> {
                         shapeWidth,
                         shapeHeight,
                       ),
+                      lineColor,
+                      strokeWidth,
                     ),
                     child: Container(),
                   );
@@ -83,6 +91,8 @@ class FigureShapeViewState extends State<FigureShapeView> {
                         shapeWidth,
                         shapeHeight,
                       ),
+                      lineColor,
+                      strokeWidth,
                     ),
                     child: Container(),
                   );
@@ -95,6 +105,8 @@ class FigureShapeViewState extends State<FigureShapeView> {
                         shapeWidth,
                         shapeHeight,
                       ),
+                      lineColor,
+                      strokeWidth,
                     ),
                     child: Container(),
                   );
@@ -294,6 +306,7 @@ class FigureShapeViewState extends State<FigureShapeView> {
               pointerSize,
               pointerSize,
             ),
+            lineColor,
           ),
           child: Container(),
         ),

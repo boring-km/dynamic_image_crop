@@ -1,18 +1,22 @@
 import 'dart:math';
 
-import 'package:dynamic_image_crop/drawing_area.dart';
-import 'package:dynamic_image_crop/painter/drawing_painter.dart';
+import 'package:dynamic_image_crop/crop_area.dart';
+import 'package:dynamic_image_crop/shapes/drawing_painter.dart';
 import 'package:flutter/material.dart';
 
 class CustomShape extends StatefulWidget {
   const CustomShape({
     required this.painterWidth,
     required this.painterHeight,
+    required this.lineColor,
+    required this.strokeWidth,
     super.key,
   });
 
   final double painterWidth;
   final double painterHeight;
+  final Color lineColor;
+  final double strokeWidth;
 
   @override
   State<CustomShape> createState() => CustomShapeState();
@@ -21,6 +25,8 @@ class CustomShape extends StatefulWidget {
 class CustomShapeState extends State<CustomShape> {
   late final painterWidth = widget.painterWidth;
   late final painterHeight = widget.painterHeight;
+  late final lineColor = widget.lineColor;
+  late final strokeWidth = widget.strokeWidth;
 
   final List<Offset?> points = <Offset?>[];
   bool isFirst = true;
@@ -70,7 +76,7 @@ class CustomShapeState extends State<CustomShape> {
         child: RepaintBoundary(
           key: globalKey,
           child: CustomPaint(
-            painter: DrawingPainter(points, first),
+            painter: DrawingPainter(points, first, lineColor, strokeWidth),
             child: Container(),
           ),
         ),

@@ -1,18 +1,19 @@
 import 'dart:ui' as ui;
 
-import 'package:dynamic_image_crop/colors.dart';
 import 'package:flutter/material.dart';
 
 class RectanglePainter extends CustomPainter {
-  RectanglePainter(this.rect);
+  RectanglePainter(this.rect, this.lineColor, this.strokeWidth);
 
   final Rect rect;
+  final Color lineColor;
+  final double strokeWidth;
 
   @override
   void paint(Canvas canvas, Size size) {
     final linePaint = Paint()
-      ..color = guideColor
-      ..strokeWidth = 1.0
+      ..color = lineColor
+      ..strokeWidth = strokeWidth
       ..filterQuality = FilterQuality.high;
 
     canvas

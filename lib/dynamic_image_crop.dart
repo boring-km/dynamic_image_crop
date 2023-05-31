@@ -10,10 +10,13 @@ import 'package:dynamic_image_crop/shapes/shape_type.dart';
 import 'package:flutter/material.dart';
 
 class DynamicImageCrop extends StatefulWidget {
+
   const DynamicImageCrop({
-    required this.imageList,
+    required this.initialImage,
     required this.controller,
     required this.cropResult,
+    this.lineColor,
+    this.strokeWidth,
     super.key,
   });
 
@@ -21,22 +24,28 @@ class DynamicImageCrop extends StatefulWidget {
     required File imageFile,
     required this.controller,
     required this.cropResult,
+    this.lineColor,
+    this.strokeWidth,
     super.key,
-  }) : imageList = imageFile.readAsBytesSync();
+  }) : initialImage = imageFile.readAsBytesSync();
 
-  final Uint8List imageList;
+  final Uint8List initialImage;
   final CropController controller;
-  final void Function(Uint8List resultImage, int width, int height)
-      cropResult;
+  final void Function(Uint8List resultImage, int width, int height) cropResult;
+  final Color? lineColor;
+  final double? strokeWidth;
 
   @override
   State<DynamicImageCrop> createState() => _DynamicImageCropState();
 }
 
 class _DynamicImageCropState extends State<DynamicImageCrop> {
-  late final image = widget.imageList;
+
   late final callback = widget.cropResult;
   late final controller = widget.controller;
+
+  late final lineColor = widget.lineColor ?? const Color(0xffff572b);
+  late final strokeWidth = widget.strokeWidth ?? 2.0;
 
   double painterWidth = 0;
   double painterHeight = 0;
@@ -50,13 +59,16 @@ class _DynamicImageCropState extends State<DynamicImageCrop> {
   @override
   void initState() {
     controller.init(
-      image: image,
+      image: widget.initialImage,
       callback: callback,
       painterKey: painterKey,
       drawingKey: drawingKey,
     );
+    controller.imageNotifier.addListener(() {
+      getImageInfo(controller.imageNotifier.image);
+    });
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      getImageInfo(image);
+      getImageInfo(controller.imageNotifier.image);
     });
     super.initState();
   }
@@ -64,35 +76,44 @@ class _DynamicImageCropState extends State<DynamicImageCrop> {
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      key: myKey,
-      listenable: controller.shapeNotifier,
-      builder: (c, _) {
-        if (controller.shapeNotifier.shapeType == ShapeType.none) {
-          return backgroundImage();
-        }
-        if (imageSize == null) return Container();
-        if (controller.shapeNotifier.shapeType == ShapeType.drawing) {
-          return Stack(
-            children: [
-              backgroundImage(),
-              CustomShape(
-                painterWidth: imageSize!.width,
-                painterHeight: imageSize!.height,
-                key: drawingKey,
-              ),
-            ],
-          );
-        }
-        return Stack(
-          children: [
-            backgroundImage(),
-            FigureShapeView(
-              painterWidth: imageSize!.width,
-              painterHeight: imageSize!.height,
-              shapeNotifier: controller.shapeNotifier,
-              key: painterKey,
-            ),
-          ],
+      listenable: controller.imageNotifier,
+      builder: (pc, _) {
+        return ListenableBuilder(
+          key: myKey,
+          listenable: controller.shapeNotifier,
+          builder: (c, _) {
+            if (controller.shapeNotifier.shapeType == ShapeType.none) {
+              return backgroundImage();
+            }
+            if (imageSize == null) return Container();
+            if (controller.shapeNotifier.shapeType == ShapeType.drawing) {
+              return Stack(
+                children: [
+                  backgroundImage(),
+                  CustomShape(
+                    painterWidth: imageSize!.width,
+                    painterHeight: imageSize!.height,
+                    lineColor: lineColor,
+                    strokeWidth: strokeWidth,
+                    key: drawingKey,
+                  ),
+                ],
+              );
+            }
+            return Stack(
+              children: [
+                backgroundImage(),
+                FigureShapeView(
+                  painterWidth: imageSize!.width,
+                  painterHeight: imageSize!.height,
+                  shapeNotifier: controller.shapeNotifier,
+                  lineColor: lineColor,
+                  strokeWidth: strokeWidth,
+                  key: painterKey,
+                ),
+              ],
+            );
+          },
         );
       },
     );
@@ -100,7 +121,7 @@ class _DynamicImageCropState extends State<DynamicImageCrop> {
 
   Image backgroundImage() {
     return Image.memory(
-      image,
+      controller.imageNotifier.image,
       width: painterWidth,
       height: painterHeight,
       fit: BoxFit.cover,

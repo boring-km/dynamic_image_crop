@@ -38,27 +38,34 @@ class CropScreen extends StatefulWidget {
 class _CropScreenState extends State<CropScreen> {
   ShapeType shapeType = ShapeType.none;
 
-  Uint8List? imageList;
-  final controller = CropController();
+  Uint8List? image;
+  final cropController = CropController();
+  final urlController = TextEditingController();
+
+  // https://medium.com/flutter/racing-forward-at-i-o-2023-with-flutter-and-dart-df2a8fa841ab
+  final initialUrl = 'https://miro.medium.com/v2/1*bzC0ul7jBVhOJiastVGKlw.png';
 
   @override
   void initState() {
-    loadImage();
+    urlController.text = initialUrl;
+    loadImage(initialUrl);
     super.initState();
   }
 
-  void loadImage() {
+  void loadImage(
+    String url, {
+    void Function(Uint8List)? callback,
+  }) {
     // Network image to Uint8List
-    // https://medium.com/flutter/racing-forward-at-i-o-2023-with-flutter-and-dart-df2a8fa841ab
-    Image.network('https://miro.medium.com/v2/1*bzC0ul7jBVhOJiastVGKlw.png')
-        .image
-        .resolve(ImageConfiguration.empty)
-        .addListener(
+    Image.network(url).image.resolve(ImageConfiguration.empty).addListener(
       ImageStreamListener((info, _) async {
         final byteData =
             await info.image.toByteData(format: ImageByteFormat.png);
         setState(() {
-          imageList = byteData!.buffer.asUint8List();
+          image = byteData!.buffer.asUint8List();
+          if (image != null) {
+            callback?.call(image!);
+          }
         });
       }),
     );
@@ -76,7 +83,7 @@ class _CropScreenState extends State<CropScreen> {
         children: [
           FloatingActionButton.extended(
             heroTag: '1',
-            onPressed: controller.cropImage,
+            onPressed: cropController.cropImage,
             label: const Text('Crop'),
           ),
           FloatingActionButton.extended(
@@ -91,13 +98,13 @@ class _CropScreenState extends State<CropScreen> {
       body: SafeArea(
         child: Stack(
           children: [
-            if (imageList == null)
+            if (image == null)
               const Center(child: CircularProgressIndicator())
             else
               Center(
                 child: DynamicImageCrop(
-                  controller: controller,
-                  imageList: imageList!,
+                  controller: cropController,
+                  initialImage: image!,
                   cropResult: (image, width, height) {
                     sendResultImage(image, context);
                   },
@@ -109,11 +116,40 @@ class _CropScreenState extends State<CropScreen> {
               bottom: 0,
               child: Container(
                 padding: const EdgeInsets.all(16),
-                color: const Color(0x66666666),
+                color: Colors.black,
                 child: Center(
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: buildButtons(),
+                  child: Column(
+                    children: [
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: buildButtons(),
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: urlController,
+                              decoration: const InputDecoration(
+                                hintText: 'Enter URL',
+                              ),
+                              onChanged: (value) {
+                                urlController.text = value;
+                              },
+                              style: const TextStyle(color: Colors.white),
+                            ),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              loadImage(
+                                urlController.text,
+                                callback: cropController.changeImage,
+                              );
+                            },
+                            child: const Text('Load'),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -159,7 +195,7 @@ class _CropScreenState extends State<CropScreen> {
   }
 
   void changeShape(ShapeType type) {
-    controller.changeType(type);
+    cropController.changeType(type);
   }
 
   void sendResultImage(

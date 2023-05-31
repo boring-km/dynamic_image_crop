@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:dynamic_image_crop/colors.dart';
 
 class SizeController extends CustomPainter {
-  SizeController(this.rect);
+  SizeController(this.rect, this.lineColor);
 
   final Rect rect;
+  final Color lineColor;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -14,7 +14,7 @@ class SizeController extends CustomPainter {
 
     final controller = Rect.fromLTWH(rect.left, rect.top, width, rect.height);
 
-    canvas.drawRect(controller, Paint()..color = guideColor);
+    canvas.drawRect(controller, Paint()..color = lineColor);
   }
 
   @override
