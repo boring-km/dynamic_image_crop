@@ -34,8 +34,8 @@ class FigureShapeView extends StatefulWidget {
 class FigureShapeViewState extends State<FigureShapeView> {
   double xPos = 0;
   double yPos = 0;
-  double shapeWidth = 200;
-  double shapeHeight = 200;
+  double shapeWidth = 100;
+  double shapeHeight = 100;
   bool isShapeDragging = false;
 
   late final lineColor = widget.lineColor;
