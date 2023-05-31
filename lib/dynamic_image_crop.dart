@@ -4,7 +4,7 @@ import 'dart:typed_data';
 
 import 'package:dynamic_image_crop/crop_controller.dart';
 import 'package:dynamic_image_crop/image_utils.dart';
-import 'package:dynamic_image_crop/painter/figure_crop_painter.dart';
+import 'package:dynamic_image_crop/painter/figure_shape_view.dart';
 import 'package:dynamic_image_crop/shapes/custom_shape.dart';
 import 'package:dynamic_image_crop/shapes/shape_type.dart';
 import 'package:flutter/material.dart';
@@ -42,7 +42,7 @@ class _DynamicImageCropState extends State<DynamicImageCrop> {
   double painterHeight = 0;
 
   final myKey = GlobalKey();
-  final painterKey = GlobalKey<FigureCropPainterState>();
+  final painterKey = GlobalKey<FigureShapeViewState>();
   final drawingKey = GlobalKey<CustomShapeState>();
 
   Size? imageSize;
@@ -86,7 +86,7 @@ class _DynamicImageCropState extends State<DynamicImageCrop> {
         return Stack(
           children: [
             backgroundImage(),
-            FigureCropPainter(
+            FigureShapeView(
               painterWidth: imageSize!.width,
               painterHeight: imageSize!.height,
               shapeNotifier: controller.shapeNotifier,

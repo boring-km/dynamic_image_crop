@@ -1,9 +1,10 @@
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
-import 'package:dynamic_image_crop/painter/drawing_area.dart';
+import 'package:dynamic_image_crop/drawing_area.dart';
 import 'package:dynamic_image_crop/painter/drawing_painter.dart';
-import 'package:dynamic_image_crop/painter/figure_crop_painter.dart';
+import 'package:dynamic_image_crop/painter/figure_shape_view.dart';
+
 import 'package:dynamic_image_crop/shape_type_notifier.dart';
 import 'package:dynamic_image_crop/shapes/circle_painter.dart';
 import 'package:dynamic_image_crop/shapes/custom_shape.dart';
@@ -20,13 +21,13 @@ class CropController {
 
   late Uint8List image;
   late void Function(Uint8List, double, double) callback;
-  late GlobalKey<FigureCropPainterState> painterKey;
+  late GlobalKey<FigureShapeViewState> painterKey;
   late GlobalKey<CustomShapeState> drawingKey;
 
   void init({
     required Uint8List image,
     required void Function(Uint8List, double, double) callback,
-    required GlobalKey<FigureCropPainterState> painterKey,
+    required GlobalKey<FigureShapeViewState> painterKey,
     required GlobalKey<CustomShapeState> drawingKey,
   }) {
     this.image = image;
@@ -73,8 +74,26 @@ class CropController {
     if (shapeType == ShapeType.drawing) {
       result = await getDrawingImage(
         crop: rect,
+        cropCenter: cropCenter,
         image: decoded,
         area: area,
+      );
+      result = await getCropImage(
+        pictureRecorder: pictureRecorder,
+        canvas: canvas,
+        cropCenter: cropCenter,
+        cropWidth: cropWidth,
+        cropHeight: cropHeight,
+        image: result,
+        shapeType: ShapeType.rectangle,
+      );
+      // callback to the parent widget
+      callback(
+        await result
+            .toByteData(format: ui.ImageByteFormat.png)
+            .then((value) => value!.buffer.asUint8List()),
+        area.width,
+        area.height,
       );
     } else {
       result = await getCropImage(
@@ -85,18 +104,16 @@ class CropController {
         cropHeight: cropHeight,
         image: decoded,
         shapeType: shapeType,
-        area: area,
+      );
+      // callback to the parent widget
+      callback(
+        await result
+            .toByteData(format: ui.ImageByteFormat.png)
+            .then((value) => value!.buffer.asUint8List()),
+        area.width,
+        area.height,
       );
     }
-
-    // callback to the parent widget
-    callback(
-      await result
-          .toByteData(format: ui.ImageByteFormat.png)
-          .then((value) => value!.buffer.asUint8List()),
-      area.width,
-      area.height,
-    );
   }
 
   static Future<ui.Image> getCropImage({
@@ -107,7 +124,6 @@ class CropController {
     required double cropHeight,
     required ui.Image image,
     required ShapeType shapeType,
-    required CropArea area,
   }) async {
     // ShapeType에 따라서 다른 Painter를 사용
     if (shapeType == ShapeType.rectangle) {
@@ -140,6 +156,7 @@ class CropController {
 
   Future<ui.Image> getDrawingImage({
     required ui.Rect crop,
+    required Offset cropCenter,
     required ui.Image image,
     required CropArea area,
   }) {
@@ -152,9 +169,10 @@ class CropController {
     DrawingCropPainter(
       drawingKey.currentState!.points,
       drawingKey.currentState!.first,
+      cropCenter,
       image,
-      area.left,
-      area.top,
+      getRatio(image, Size(painterWidth, painterHeight)),
+      crop,
     ).paint(
       canvas,
       Size(cropWidth, cropHeight),
@@ -163,7 +181,7 @@ class CropController {
     // html 렌더링을 사용하는 Web에서는 Picture.toImage()가 작동하지 않음
     return pictureRecorder
         .endRecording()
-        .toImage(cropWidth.round(), cropHeight.round());
+        .toImage(image.width, image.height);
   }
 
   Rect calculateCropArea({

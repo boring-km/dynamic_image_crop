@@ -13,7 +13,8 @@ class CirclePainter extends CustomPainter {
     final linePaint = Paint()
       ..color = guideColor
       ..strokeWidth = 1.0
-      ..style = PaintingStyle.stroke;
+      ..style = PaintingStyle.stroke
+      ..filterQuality = FilterQuality.high;
 
     canvas.drawOval(rect, linePaint);
   }

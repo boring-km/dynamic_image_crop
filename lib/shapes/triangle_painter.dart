@@ -11,7 +11,8 @@ class TrianglePainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final linePaint = Paint()
       ..color = guideColor
-      ..strokeWidth = 1.0;
+      ..strokeWidth = 1.0
+      ..filterQuality = FilterQuality.high;
 
     canvas
       ..drawLine(rect.bottomLeft, rect.topCenter, linePaint)

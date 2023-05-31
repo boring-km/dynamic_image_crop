@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:dynamic_image_crop/painter/drawing_area.dart';
+import 'package:dynamic_image_crop/drawing_area.dart';
 import 'package:dynamic_image_crop/painter/drawing_painter.dart';
 import 'package:flutter/material.dart';
 
@@ -35,17 +35,20 @@ class CustomShapeState extends State<CustomShape> {
       width: painterWidth,
       height: painterHeight,
       child: GestureDetector(
+        onPanDown: (details) {
+          setState(() {
+            final position = details.localPosition;
+            points.add(position);
+          });
+        },
         onPanStart: (details) {
           setState(() {
-            final renderBox = context.findRenderObject() as RenderBox?;
-            if (renderBox != null) {
-              final position = renderBox.globalToLocal(details.globalPosition);
-              if (isFirst) {
-                first = position;
-                isFirst = false;
-              }
-              points.add(position);
+            final position = details.localPosition;
+            if (isFirst) {
+              first = position;
+              isFirst = false;
             }
+            points.add(position);
           });
         },
         onPanUpdate: (details) {
@@ -55,10 +58,7 @@ class CustomShapeState extends State<CustomShape> {
 
           if (0 <= dx && dx <= painterWidth && 0 <= dy && dy <= painterHeight) {
             setState(() {
-              final renderBox = context.findRenderObject() as RenderBox?;
-              if (renderBox != null) {
-                points.add(renderBox.globalToLocal(details.globalPosition));
-              }
+              points.add(localPosition);
             });
           }
         },

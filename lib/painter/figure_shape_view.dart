@@ -1,6 +1,6 @@
 // ignore_for_file: non_constant_identifier_names
 
-import 'package:dynamic_image_crop/painter/drawing_area.dart';
+import 'package:dynamic_image_crop/drawing_area.dart';
 import 'package:dynamic_image_crop/shape_type_notifier.dart';
 import 'package:dynamic_image_crop/shapes/circle_painter.dart';
 import 'package:dynamic_image_crop/shapes/rectangle_painter.dart';
@@ -9,8 +9,8 @@ import 'package:dynamic_image_crop/shapes/triangle_painter.dart';
 import 'package:dynamic_image_crop/size_controller.dart';
 import 'package:flutter/material.dart';
 
-class FigureCropPainter extends StatefulWidget {
-  const FigureCropPainter({
+class FigureShapeView extends StatefulWidget {
+  const FigureShapeView({
     required this.painterWidth,
     required this.painterHeight,
     required this.shapeNotifier,
@@ -24,10 +24,10 @@ class FigureCropPainter extends StatefulWidget {
   final ShapeTypeNotifier shapeNotifier;
 
   @override
-  State<FigureCropPainter> createState() => FigureCropPainterState();
+  State<FigureShapeView> createState() => FigureShapeViewState();
 }
 
-class FigureCropPainterState extends State<FigureCropPainter> {
+class FigureShapeViewState extends State<FigureShapeView> {
   double xPos = 0;
   double yPos = 0;
   double shapeWidth = 200;
