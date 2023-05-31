@@ -15,11 +15,8 @@ dependencies:
 
   cupertino_icons: ^1.0.2
 
-  image_picker: ^0.8.7+5
-  camera: ^0.10.5+2
   path_provider:
   very_good_analysis:
-  image_picker_web: ^3.0.0+1
 
 dev_dependencies:
   flutter_test:
@@ -29,5 +26,4 @@ dev_dependencies:
   build_runner:
 
 flutter:
-
   uses-material-design: true

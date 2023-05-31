@@ -1,13 +1,11 @@
-import 'dart:io';
+import 'dart:ui';
 
 import 'package:dynamic_image_crop/crop_controller.dart';
 import 'package:dynamic_image_crop/dynamic_image_crop.dart';
 import 'package:dynamic_image_crop/shapes/shape_type.dart';
-import 'package:dynamic_image_crop_example/result_screen.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 
-import 'package:image_picker/image_picker.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 void main() {
   runApp(const TestApp());
@@ -25,81 +23,13 @@ class _TestAppState extends State<TestApp> {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: SelectView(),
-    );
-  }
-}
-
-class SelectView extends StatefulWidget {
-  const SelectView({super.key});
-
-  @override
-  State<SelectView> createState() => _SelectViewState();
-}
-
-class _SelectViewState extends State<SelectView> {
-  final ImagePicker imagePicker = ImagePicker();
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(onPressed: pickCamera, child: const Text('Camera')),
-            ElevatedButton(onPressed: pickImage, child: const Text('Gallery')),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void pickCamera() {
-    imagePicker.pickImage(source: ImageSource.camera).then((xFile) {
-      if (xFile != null) {
-        final file = File(xFile.path);
-        if (file.existsSync()) {
-          moveToCropScreen(file.readAsBytesSync());
-        }
-      }
-    });
-  }
-
-  void pickImage() {
-    if (kIsWeb) {
-      // ImagePickerWeb.getImageAsBytes().then((value) {
-      //   if (value != null) {
-      //     moveToCropScreen(value);
-      //   }
-      // });
-    } else {
-      ImagePicker().pickImage(source: ImageSource.gallery).then((xFile) {
-        if (xFile != null) {
-          final file = File(xFile.path);
-          if (file.existsSync()) {
-            moveToCropScreen(file.readAsBytesSync());
-          }
-        }
-      });
-    }
-  }
-
-  void moveToCropScreen(Uint8List imageList) {
-    Navigator.push(
-      context,
-      MaterialPageRoute<dynamic>(
-        builder: (_) => CropScreen(imageList),
-      ),
+      home: CropScreen(),
     );
   }
 }
 
 class CropScreen extends StatefulWidget {
-  const CropScreen(this.imageList, {super.key});
-
-  final Uint8List imageList;
+  const CropScreen({super.key});
 
   @override
   State<CropScreen> createState() => _CropScreenState();
@@ -107,9 +37,32 @@ class CropScreen extends StatefulWidget {
 
 class _CropScreenState extends State<CropScreen> {
   ShapeType shapeType = ShapeType.none;
-  late final imageList = widget.imageList;
 
+  Uint8List? imageList;
   final controller = CropController();
+
+  @override
+  void initState() {
+    loadImage();
+    super.initState();
+  }
+
+  void loadImage() {
+    // Network image to Uint8List
+    // https://medium.com/flutter/racing-forward-at-i-o-2023-with-flutter-and-dart-df2a8fa841ab
+    Image.network('https://miro.medium.com/v2/1*bzC0ul7jBVhOJiastVGKlw.png')
+        .image
+        .resolve(ImageConfiguration.empty)
+        .addListener(
+      ImageStreamListener((info, _) async {
+        final byteData =
+            await info.image.toByteData(format: ImageByteFormat.png);
+        setState(() {
+          imageList = byteData!.buffer.asUint8List();
+        });
+      }),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -138,15 +91,18 @@ class _CropScreenState extends State<CropScreen> {
       body: SafeArea(
         child: Stack(
           children: [
-            Center(
-              child: DynamicImageCrop(
-                controller: controller,
-                imageList: imageList,
-                cropResult: (image, width, height) {
-                  sendResultImage(image, width, height, context);
-                },
+            if (imageList == null)
+              const Center(child: CircularProgressIndicator())
+            else
+              Center(
+                child: DynamicImageCrop(
+                  controller: controller,
+                  imageList: imageList!,
+                  cropResult: (image, width, height) {
+                    sendResultImage(image, context);
+                  },
+                ),
               ),
-            ),
             const Center(),
             Positioned(
               width: size.width,
@@ -208,8 +164,6 @@ class _CropScreenState extends State<CropScreen> {
 
   void sendResultImage(
     Uint8List? bytes,
-    double shapeWidth,
-    double shapeHeight,
     BuildContext context,
   ) {
     if (bytes != null) {
@@ -218,11 +172,36 @@ class _CropScreenState extends State<CropScreen> {
         MaterialPageRoute<dynamic>(
           builder: (_) => ResultScreen(
             image: bytes,
-            width: shapeWidth,
-            height: shapeHeight,
           ),
         ),
       );
     }
+  }
+}
+
+class ResultScreen extends StatelessWidget {
+  const ResultScreen({
+    required this.image,
+    super.key,
+  });
+
+  final Uint8List image;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => Navigator.pop(context),
+        child: const Icon(Icons.arrow_back),
+      ),
+      body: Center(
+        child: Image.memory(
+          image,
+          fit: BoxFit.cover,
+        ),
+      ),
+    );
   }
 }

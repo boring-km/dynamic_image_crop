@@ -20,13 +20,13 @@ class CropController {
   final shapeNotifier = ShapeTypeNotifier();
 
   late Uint8List image;
-  late void Function(Uint8List, double, double) callback;
+  late void Function(Uint8List, int, int) callback;
   late GlobalKey<FigureShapeViewState> painterKey;
   late GlobalKey<CustomShapeState> drawingKey;
 
   void init({
     required Uint8List image,
-    required void Function(Uint8List, double, double) callback,
+    required void Function(Uint8List, int, int) callback,
     required GlobalKey<FigureShapeViewState> painterKey,
     required GlobalKey<CustomShapeState> drawingKey,
   }) {
@@ -39,7 +39,7 @@ class CropController {
   void cropImage() {
     final shapeType = shapeNotifier.shapeType;
     if (shapeType == ShapeType.none) {
-      callback(image, painterWidth, painterHeight);
+      callback(image, painterWidth.floor(), painterHeight.floor());
     } else {
       final area = shapeType == ShapeType.drawing
           ? drawingKey.currentState!.getDrawingArea()
@@ -92,8 +92,8 @@ class CropController {
         await result
             .toByteData(format: ui.ImageByteFormat.png)
             .then((value) => value!.buffer.asUint8List()),
-        area.width,
-        area.height,
+        result.width,
+        result.height,
       );
     } else {
       result = await getCropImage(
@@ -110,8 +110,8 @@ class CropController {
         await result
             .toByteData(format: ui.ImageByteFormat.png)
             .then((value) => value!.buffer.asUint8List()),
-        area.width,
-        area.height,
+        result.width,
+        result.height,
       );
     }
   }

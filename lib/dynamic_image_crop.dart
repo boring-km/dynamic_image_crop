@@ -26,7 +26,7 @@ class DynamicImageCrop extends StatefulWidget {
 
   final Uint8List imageList;
   final CropController controller;
-  final void Function(Uint8List resultImage, double width, double height)
+  final void Function(Uint8List resultImage, int width, int height)
       cropResult;
 
   @override
