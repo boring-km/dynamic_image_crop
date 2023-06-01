@@ -12,9 +12,19 @@ class ImageUtils {
     return Size(deviceWidth, deviceHeight);
   }
 
-  static Future<void> getImageSize(Uint8List imageList, void Function(double, double) callback) async {
+  static Future<void> getImageSize(
+    Uint8List imageList,
+    void Function(double, double) callback,
+  ) async {
     ui.decodeImageFromList(imageList, (image) {
       callback(image.width.toDouble(), image.height.toDouble());
     });
+  }
+
+  static ui.Size getRatio(ui.Image image, Size painterSize) {
+    return Size(
+      image.width / painterSize.width,
+      image.height / painterSize.height,
+    );
   }
 }

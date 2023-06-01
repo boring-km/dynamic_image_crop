@@ -1,11 +1,11 @@
 import 'dart:math';
 
-import 'package:dynamic_image_crop/crop_area.dart';
-import 'package:dynamic_image_crop/shapes/drawing_painter.dart';
+import 'package:dynamic_image_crop/src/crop/crop_area.dart';
+import 'package:dynamic_image_crop/src/shape_painter/drawing_painter.dart';
 import 'package:flutter/material.dart';
 
-class CustomShape extends StatefulWidget {
-  const CustomShape({
+class DrawingView extends StatefulWidget {
+  const DrawingView({
     required this.painterWidth,
     required this.painterHeight,
     required this.lineColor,
@@ -19,10 +19,10 @@ class CustomShape extends StatefulWidget {
   final double strokeWidth;
 
   @override
-  State<CustomShape> createState() => CustomShapeState();
+  State<DrawingView> createState() => DrawingViewState();
 }
 
-class CustomShapeState extends State<CustomShape> {
+class DrawingViewState extends State<DrawingView> {
   late final painterWidth = widget.painterWidth;
   late final painterHeight = widget.painterHeight;
   late final lineColor = widget.lineColor;

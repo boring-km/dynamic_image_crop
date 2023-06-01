@@ -1,12 +1,12 @@
 // ignore_for_file: non_constant_identifier_names
 
-import 'package:dynamic_image_crop/crop_area.dart';
-import 'package:dynamic_image_crop/shape_type_notifier.dart';
-import 'package:dynamic_image_crop/shapes/circle_painter.dart';
-import 'package:dynamic_image_crop/shapes/rectangle_painter.dart';
-import 'package:dynamic_image_crop/shapes/shape_type.dart';
-import 'package:dynamic_image_crop/shapes/triangle_painter.dart';
-import 'package:dynamic_image_crop/size_controller.dart';
+import 'package:dynamic_image_crop/src/controller/crop_type_notifier.dart';
+import 'package:dynamic_image_crop/src/crop/crop_area.dart';
+import 'package:dynamic_image_crop/src/crop/crop_type.dart';
+import 'package:dynamic_image_crop/src/shape_painter/circle_painter.dart';
+import 'package:dynamic_image_crop/src/shape_painter/rectangle_painter.dart';
+import 'package:dynamic_image_crop/src/shape_painter/size_control_painter.dart';
+import 'package:dynamic_image_crop/src/shape_painter/triangle_painter.dart';
 import 'package:flutter/material.dart';
 
 class FigureShapeView extends StatefulWidget {
@@ -23,7 +23,7 @@ class FigureShapeView extends StatefulWidget {
   final double painterWidth;
   final double painterHeight;
   final double movingDotSize;
-  final ShapeTypeNotifier shapeNotifier;
+  final CropTypeNotifier shapeNotifier;
   final Color lineColor;
   final double strokeWidth;
 
@@ -42,7 +42,7 @@ class FigureShapeViewState extends State<FigureShapeView> {
   late double strokeWidth = widget.strokeWidth;
   late double pointerSize = widget.movingDotSize;
   late double radius = widget.movingDotSize / 2;
-  late ShapeTypeNotifier st = widget.shapeNotifier;
+  late CropTypeNotifier st = widget.shapeNotifier;
 
   bool imageLoaded = false;
   bool isImageLoaded = false;
@@ -68,7 +68,7 @@ class FigureShapeViewState extends State<FigureShapeView> {
             child: ListenableBuilder(
               listenable: st,
               builder: (context, _) {
-                if (st.shapeType == ShapeType.rectangle) {
+                if (st.cropType == CropType.rectangle) {
                   return CustomPaint(
                     painter: RectanglePainter(
                       Rect.fromLTWH(
@@ -82,7 +82,7 @@ class FigureShapeViewState extends State<FigureShapeView> {
                     ),
                     child: Container(),
                   );
-                } else if (st.shapeType == ShapeType.circle) {
+                } else if (st.cropType == CropType.circle) {
                   return CustomPaint(
                     painter: CirclePainter(
                       Rect.fromLTWH(
@@ -96,7 +96,7 @@ class FigureShapeViewState extends State<FigureShapeView> {
                     ),
                     child: Container(),
                   );
-                } else if (st.shapeType == ShapeType.triangle) {
+                } else if (st.cropType == CropType.triangle) {
                   return CustomPaint(
                     painter: TrianglePainter(
                       Rect.fromLTWH(
@@ -299,7 +299,7 @@ class FigureShapeViewState extends State<FigureShapeView> {
       height: pointerSize,
       child: Center(
         child: CustomPaint(
-          painter: SizeController(
+          painter: SizeControlPainter(
             Rect.fromLTWH(
               xPos,
               yPos,

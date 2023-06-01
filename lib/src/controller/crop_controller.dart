@@ -1,35 +1,35 @@
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
-import 'package:dynamic_image_crop/crop_area.dart';
-import 'package:dynamic_image_crop/image_change_notifier.dart';
-import 'package:dynamic_image_crop/painter/figure_shape_view.dart';
-
-import 'package:dynamic_image_crop/shape_type_notifier.dart';
-import 'package:dynamic_image_crop/shapes/circle_painter.dart';
-import 'package:dynamic_image_crop/shapes/custom_shape.dart';
-import 'package:dynamic_image_crop/shapes/drawing_painter.dart';
-import 'package:dynamic_image_crop/shapes/rectangle_painter.dart';
-import 'package:dynamic_image_crop/shapes/shape_type.dart';
-import 'package:dynamic_image_crop/shapes/triangle_painter.dart';
+import 'package:dynamic_image_crop/src/image_utils.dart';
+import 'package:dynamic_image_crop/src/controller/crop_type_notifier.dart';
+import 'package:dynamic_image_crop/src/controller/image_change_notifier.dart';
+import 'package:dynamic_image_crop/src/crop/crop_area.dart';
+import 'package:dynamic_image_crop/src/crop/crop_type.dart';
+import 'package:dynamic_image_crop/src/shape_painter/circle_painter.dart';
+import 'package:dynamic_image_crop/src/shape_painter/drawing_painter.dart';
+import 'package:dynamic_image_crop/src/shape_painter/rectangle_painter.dart';
+import 'package:dynamic_image_crop/src/shape_painter/triangle_painter.dart';
+import 'package:dynamic_image_crop/src/ui/drawing_view.dart';
+import 'package:dynamic_image_crop/src/ui/figure_shape_view.dart';
 import 'package:flutter/material.dart';
 
 class CropController {
   double painterWidth = 0;
   double painterHeight = 0;
 
-  final shapeNotifier = ShapeTypeNotifier();
+  final cropTypeNotifier = CropTypeNotifier();
   final imageNotifier = ImageChangeNotifier();
 
   late void Function(Uint8List, int, int) callback;
   late GlobalKey<FigureShapeViewState> painterKey;
-  late GlobalKey<CustomShapeState> drawingKey;
+  late GlobalKey<DrawingViewState> drawingKey;
 
   void init({
     required Uint8List image,
     required void Function(Uint8List, int, int) callback,
     required GlobalKey<FigureShapeViewState> painterKey,
-    required GlobalKey<CustomShapeState> drawingKey,
+    required GlobalKey<DrawingViewState> drawingKey,
   }) {
     imageNotifier.set(image);
     this.callback = callback;
@@ -38,14 +38,15 @@ class CropController {
   }
 
   void cropImage() {
-    final shapeType = shapeNotifier.shapeType;
-    if (shapeType == ShapeType.none) {
-      callback(imageNotifier.image, painterWidth.floor(), painterHeight.floor());
+    final cropType = cropTypeNotifier.cropType;
+    if (cropType == CropType.none) {
+      callback(
+          imageNotifier.image, painterWidth.floor(), painterHeight.floor());
     } else {
-      final area = shapeType == ShapeType.drawing
+      final area = cropType == CropType.drawing
           ? drawingKey.currentState!.getDrawingArea()
           : painterKey.currentState!.getPainterArea();
-      callbackToParentWidget(area, shapeType);
+      callbackToParentWidget(area, cropType);
     }
   }
 
@@ -55,7 +56,7 @@ class CropController {
 
   Future<void> callbackToParentWidget(
     CropArea area,
-    ShapeType shapeType,
+    CropType cropType,
   ) async {
     final rect = calculateCropArea(
       area: area,
@@ -76,7 +77,7 @@ class CropController {
     );
 
     ui.Image result;
-    if (shapeType == ShapeType.drawing) {
+    if (cropType == CropType.drawing) {
       result = await getDrawingImage(
         crop: rect,
         cropCenter: cropCenter,
@@ -90,7 +91,7 @@ class CropController {
         cropWidth: cropWidth,
         cropHeight: cropHeight,
         image: result,
-        shapeType: ShapeType.rectangle,
+        cropType: CropType.rectangle,
       );
       // callback to the parent widget
       callback(
@@ -108,7 +109,7 @@ class CropController {
         cropWidth: cropWidth,
         cropHeight: cropHeight,
         image: decoded,
-        shapeType: shapeType,
+        cropType: cropType,
       );
       // callback to the parent widget
       callback(
@@ -128,22 +129,22 @@ class CropController {
     required double cropWidth,
     required double cropHeight,
     required ui.Image image,
-    required ShapeType shapeType,
+    required CropType cropType,
   }) async {
-    // ShapeType에 따라서 다른 Painter를 사용
-    if (shapeType == ShapeType.rectangle) {
+    // CropType에 따라서 다른 Painter를 사용
+    if (cropType == CropType.rectangle) {
       RectanglePainterForCrop(
         Rect.fromLTWH(0, 0, cropWidth, cropHeight),
         cropCenter,
         image,
       ).paint(canvas, Size(cropWidth, cropHeight));
-    } else if (shapeType == ShapeType.circle) {
+    } else if (cropType == CropType.circle) {
       CirclePainterForCrop(
         Rect.fromLTWH(0, 0, cropWidth, cropHeight),
         cropCenter,
         image,
       ).paint(canvas, Size(cropWidth, cropHeight));
-    } else if (shapeType == ShapeType.triangle) {
+    } else if (cropType == CropType.triangle) {
       TrianglePainterForCrop(
         Rect.fromLTWH(0, 0, cropWidth, cropHeight),
         cropCenter,
@@ -176,7 +177,7 @@ class CropController {
       drawingKey.currentState!.first,
       cropCenter,
       image,
-      getRatio(image, Size(painterWidth, painterHeight)),
+      ImageUtils.getRatio(image, Size(painterWidth, painterHeight)),
       crop,
     ).paint(
       canvas,
@@ -184,9 +185,7 @@ class CropController {
     );
 
     // html 렌더링을 사용하는 Web에서는 Picture.toImage()가 작동하지 않음
-    return pictureRecorder
-        .endRecording()
-        .toImage(image.width, image.height);
+    return pictureRecorder.endRecording().toImage(image.width, image.height);
   }
 
   Rect calculateCropArea({
@@ -202,12 +201,8 @@ class CropController {
     return Rect.fromLTWH(fromLeft, fromTop, width, height);
   }
 
-  ui.Size getRatio(ui.Image image, Size painterSize) {
-    return Size(image.width / painterSize.width, image.height / painterSize.height);
-  }
-
-  void changeType(ShapeType type) {
-    shapeNotifier.set(type);
+  void changeType(CropType type) {
+    cropTypeNotifier.set(type);
   }
 
   void set(double painterWidth, double painterHeight) {

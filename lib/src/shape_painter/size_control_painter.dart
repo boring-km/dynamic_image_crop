@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class SizeController extends CustomPainter {
-  SizeController(this.rect, this.lineColor);
+class SizeControlPainter extends CustomPainter {
+  SizeControlPainter(this.rect, this.lineColor);
 
   final Rect rect;
   final Color lineColor;

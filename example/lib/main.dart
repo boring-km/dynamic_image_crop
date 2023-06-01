@@ -1,8 +1,7 @@
 import 'dart:ui';
 
-import 'package:dynamic_image_crop/crop_controller.dart';
+
 import 'package:dynamic_image_crop/dynamic_image_crop.dart';
-import 'package:dynamic_image_crop/shapes/shape_type.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -36,7 +35,7 @@ class CropScreen extends StatefulWidget {
 }
 
 class _CropScreenState extends State<CropScreen> {
-  ShapeType shapeType = ShapeType.none;
+  CropType cropType = CropType.none;
 
   Uint8List? image;
   final cropController = CropController();
@@ -89,7 +88,7 @@ class _CropScreenState extends State<CropScreen> {
           FloatingActionButton.extended(
             heroTag: '2',
             onPressed: () {
-              changeShape(ShapeType.none);
+              changeShape(CropType.none);
             },
             label: const Text('Cancel'),
           ),
@@ -165,28 +164,28 @@ class _CropScreenState extends State<CropScreen> {
       children: [
         ElevatedButton(
           onPressed: () {
-            changeShape(ShapeType.rectangle);
+            changeShape(CropType.rectangle);
           },
           child: const Text('Rect'),
         ),
         const SizedBox(width: 8),
         ElevatedButton(
           onPressed: () {
-            changeShape(ShapeType.circle);
+            changeShape(CropType.circle);
           },
           child: const Text('Circle'),
         ),
         const SizedBox(width: 8),
         ElevatedButton(
           onPressed: () {
-            changeShape(ShapeType.triangle);
+            changeShape(CropType.triangle);
           },
           child: const Text('Triangle'),
         ),
         const SizedBox(width: 8),
         ElevatedButton(
           onPressed: () {
-            changeShape(ShapeType.drawing);
+            changeShape(CropType.drawing);
           },
           child: const Text('Drawing'),
         ),
@@ -194,7 +193,7 @@ class _CropScreenState extends State<CropScreen> {
     );
   }
 
-  void changeShape(ShapeType type) {
+  void changeShape(CropType type) {
     cropController.changeType(type);
   }
 
