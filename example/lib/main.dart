@@ -1,7 +1,7 @@
 import 'dart:ui';
 
-
 import 'package:dynamic_image_crop/dynamic_image_crop.dart';
+import 'package:flutter/cupertino.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -41,8 +41,7 @@ class _CropScreenState extends State<CropScreen> {
   final cropController = CropController();
   final urlController = TextEditingController();
 
-  // https://medium.com/flutter/racing-forward-at-i-o-2023-with-flutter-and-dart-df2a8fa841ab
-  final initialUrl = 'https://miro.medium.com/v2/1*bzC0ul7jBVhOJiastVGKlw.png';
+  final initialUrl = 'https://avatars.githubusercontent.com/u/34850203?v=4';
 
   @override
   void initState() {
@@ -77,22 +76,11 @@ class _CropScreenState extends State<CropScreen> {
     return Scaffold(
       backgroundColor: Colors.black,
       floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
-      floatingActionButton: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          FloatingActionButton.extended(
-            heroTag: '1',
-            onPressed: cropController.cropImage,
-            label: const Text('Crop'),
-          ),
-          FloatingActionButton.extended(
-            heroTag: '2',
-            onPressed: () {
-              changeShape(CropType.none);
-            },
-            label: const Text('Cancel'),
-          ),
-        ],
+      floatingActionButton: FloatingActionButton.extended(
+        heroTag: '1',
+        onPressed: cropController.cropImage,
+        backgroundColor: Colors.white,
+        label: const Text('Crop', style: TextStyle(color: Colors.black)),
       ),
       body: SafeArea(
         child: Stack(
@@ -137,14 +125,20 @@ class _CropScreenState extends State<CropScreen> {
                               style: const TextStyle(color: Colors.white),
                             ),
                           ),
-                          ElevatedButton(
-                            onPressed: () {
-                              loadImage(
-                                urlController.text,
-                                callback: cropController.changeImage,
-                              );
-                            },
-                            child: const Text('Load'),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8),
+                            child: IconButton(
+                              onPressed: () {
+                                loadImage(
+                                  urlController.text,
+                                  callback: cropController.changeImage,
+                                );
+                              },
+                              icon: const Icon(
+                                CupertinoIcons.search_circle_fill,
+                                color: Colors.white,
+                              ),
+                            ),
                           ),
                         ],
                       ),
@@ -162,32 +156,32 @@ class _CropScreenState extends State<CropScreen> {
   Widget buildButtons() {
     return Row(
       children: [
-        ElevatedButton(
-          onPressed: () {
-            changeShape(CropType.rectangle);
-          },
-          child: const Text('Rect'),
+        IconButton(
+          onPressed: () => changeShape(CropType.rectangle),
+          icon: const Icon(CupertinoIcons.rectangle_fill, color: Colors.white),
         ),
         const SizedBox(width: 8),
-        ElevatedButton(
-          onPressed: () {
-            changeShape(CropType.circle);
-          },
-          child: const Text('Circle'),
+        IconButton(
+          onPressed: () => changeShape(CropType.circle),
+          icon: const Icon(CupertinoIcons.circle_fill, color: Colors.white),
         ),
         const SizedBox(width: 8),
-        ElevatedButton(
-          onPressed: () {
-            changeShape(CropType.triangle);
-          },
-          child: const Text('Triangle'),
+        IconButton(
+          onPressed: () => changeShape(CropType.triangle),
+          icon: const Icon(CupertinoIcons.triangle_fill, color: Colors.white),
         ),
         const SizedBox(width: 8),
-        ElevatedButton(
-          onPressed: () {
-            changeShape(CropType.drawing);
-          },
-          child: const Text('Drawing'),
+        IconButton(
+          onPressed: () => changeShape(CropType.drawing),
+          icon: const Icon(CupertinoIcons.pencil_outline, color: Colors.white),
+        ),
+        const SizedBox(width: 8),
+        IconButton(
+          onPressed: () => changeShape(CropType.none),
+          icon: const Icon(
+            CupertinoIcons.clear_circled_solid,
+            color: Colors.white,
+          ),
         ),
       ],
     );
@@ -228,8 +222,9 @@ class ResultScreen extends StatelessWidget {
       backgroundColor: Colors.black,
       floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.white,
         onPressed: () => Navigator.pop(context),
-        child: const Icon(Icons.arrow_back),
+        child: const Icon(Icons.arrow_back, color: Colors.black),
       ),
       body: Center(
         child: Image.memory(

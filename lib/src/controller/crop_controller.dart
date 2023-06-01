@@ -1,11 +1,11 @@
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
-import 'package:dynamic_image_crop/src/image_utils.dart';
 import 'package:dynamic_image_crop/src/controller/crop_type_notifier.dart';
 import 'package:dynamic_image_crop/src/controller/image_change_notifier.dart';
 import 'package:dynamic_image_crop/src/crop/crop_area.dart';
 import 'package:dynamic_image_crop/src/crop/crop_type.dart';
+import 'package:dynamic_image_crop/src/image_utils.dart';
 import 'package:dynamic_image_crop/src/shape_painter/circle_painter.dart';
 import 'package:dynamic_image_crop/src/shape_painter/drawing_painter.dart';
 import 'package:dynamic_image_crop/src/shape_painter/rectangle_painter.dart';
