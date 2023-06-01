@@ -41,7 +41,8 @@ class _CropScreenState extends State<CropScreen> {
   final cropController = CropController();
   final urlController = TextEditingController();
 
-  final initialUrl = 'https://velog.velcdn.com/images/kmjin/post/38d2270d-8c1c-4cf2-a0be-724f3cce437b/image.jpeg';
+  // https://medium.com/flutter/racing-forward-at-i-o-2023-with-flutter-and-dart-df2a8fa841ab
+  final initialUrl = 'https://miro.medium.com/v2/1*bzC0ul7jBVhOJiastVGKlw.png';
 
   @override
   void initState() {
