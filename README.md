@@ -2,8 +2,10 @@
 
 A Flutter package to crop images into various shapes.
 
+## Introduction
 
+## Features
 
-- flutter dynamic image crop plugin
-- Use this plug-in to crop images into various shapes.
+## Usage
 
+## Crop Result

@@ -41,7 +41,7 @@ class _CropScreenState extends State<CropScreen> {
   final cropController = CropController();
   final urlController = TextEditingController();
 
-  final initialUrl = 'https://avatars.githubusercontent.com/u/34850203?v=4';
+  final initialUrl = 'https://velog.velcdn.com/images/kmjin/post/38d2270d-8c1c-4cf2-a0be-724f3cce437b/image.jpeg';
 
   @override
   void initState() {
