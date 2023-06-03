@@ -54,18 +54,23 @@ class _CropScreenState extends State<CropScreen> {
   void loadImage(
     String url, {
     void Function(Uint8List)? callback,
+    ImageByteFormat imageFormat = ImageByteFormat.png,
   }) {
     // Network image to Uint8List
     Image.network(url).image.resolve(ImageConfiguration.empty).addListener(
       ImageStreamListener((info, _) async {
-        final byteData =
-            await info.image.toByteData(format: ImageByteFormat.png);
-        setState(() {
-          image = byteData!.buffer.asUint8List();
-          if (image != null) {
-            callback?.call(image!);
-          }
-        });
+        try {
+          final byteData =
+          await info.image.toByteData(format: imageFormat);
+          setState(() {
+            image = byteData!.buffer.asUint8List();
+            if (image != null) {
+              callback?.call(image!);
+            }
+          });
+        } catch (e) {
+          debugPrint('try another image byte format: $e');
+        }
       }),
     );
   }
@@ -78,7 +83,6 @@ class _CropScreenState extends State<CropScreen> {
       backgroundColor: Colors.black,
       floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
       floatingActionButton: FloatingActionButton.extended(
-        heroTag: '1',
         onPressed: cropController.cropImage,
         backgroundColor: Colors.white,
         label: const Text('Crop', style: TextStyle(color: Colors.black)),
