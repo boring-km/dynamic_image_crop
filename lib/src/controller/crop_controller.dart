@@ -41,7 +41,10 @@ class CropController {
     final cropType = cropTypeNotifier.cropType;
     if (cropType == CropType.none) {
       callback(
-          imageNotifier.image, painterWidth.floor(), painterHeight.floor());
+        imageNotifier.image,
+        painterWidth.floor(),
+        painterHeight.floor(),
+      );
     } else {
       final area = cropType == CropType.drawing
           ? drawingKey.currentState!.getDrawingArea()
