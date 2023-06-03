@@ -1,6 +1,10 @@
 name: Example Web Deploy
 on:
   push:
+    paths-ignore:
+      - 'README.md'
+      - 'LICENSE'
+      - 'CHANGELOG.md'
     branches:
       - master
 jobs:

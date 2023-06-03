@@ -6,6 +6,8 @@ A Flutter package to crop images into various shapes.
 
 <img src="images/demo.gif" width="40%" alt="demo">
 
+You can test the package by this link: [demo_link](https://boring-km.dev/dynamic_image_crop/)
+
 ## Features
 
 dynamic_image_crop supports the following features:
