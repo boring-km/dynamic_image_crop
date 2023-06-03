@@ -16,7 +16,7 @@ class DynamicImageCrop extends StatefulWidget {
     required this.controller,
     required this.onResult,
     this.cropLineColor,
-    this.cropLineStrokeWidth,
+    this.cropLineWidth,
     super.key,
   });
 
@@ -25,7 +25,7 @@ class DynamicImageCrop extends StatefulWidget {
     required this.controller,
     required this.onResult,
     this.cropLineColor,
-    this.cropLineStrokeWidth,
+    this.cropLineWidth,
     super.key,
   }) : image = imageFile.readAsBytesSync();
 
@@ -33,7 +33,7 @@ class DynamicImageCrop extends StatefulWidget {
   final CropController controller;
   final void Function(Uint8List resultImage, int width, int height) onResult;
   final Color? cropLineColor;
-  final double? cropLineStrokeWidth;
+  final double? cropLineWidth;
 
   @override
   State<DynamicImageCrop> createState() => _DynamicImageCropState();
@@ -45,7 +45,7 @@ class _DynamicImageCropState extends State<DynamicImageCrop> {
   late final controller = widget.controller;
 
   late final lineColor = widget.cropLineColor ?? const Color(0xffff572b);
-  late final strokeWidth = widget.cropLineStrokeWidth ?? 2.0;
+  late final strokeWidth = widget.cropLineWidth ?? 2.0;
 
   double painterWidth = 0;
   double painterHeight = 0;

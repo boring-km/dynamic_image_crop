@@ -4,7 +4,7 @@ A Flutter package to crop images into various shapes.
 
 ## Introduction
 
-<img src="images/demo.gif" width="40%" alt="demo">
+<img src="https://github.com/boring-km/dynamic_image_crop/raw/master/images/demo.gif" width="40%" alt="demo">
 
 You can test the package by this link: [demo_link](https://boring-km.dev/dynamic_image_crop/)
 
@@ -27,6 +27,16 @@ final controller = CropController();
 DynamicImageCrop(
   controller: controller,
   image: image!,  // Uint8List
+  onResult: (image, width, height) {
+    // cropped Image (Uint8List), width and height
+  },
+  cropLineColor: Colors.red, // (Optional)
+  cropLineWidth: 1.0, // (Optional)
+)
+
+DynamicImageCrop.fromFile(
+  imageFile: file,  // File
+  controller: controller,
   onResult: (image, width, height) {
     // cropped Image (Uint8List), width and height
   },
