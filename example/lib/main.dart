@@ -96,8 +96,8 @@ class _CropScreenState extends State<CropScreen> {
               Center(
                 child: DynamicImageCrop(
                   controller: cropController,
-                  initialImage: image!,
-                  cropResult: (image, width, height) {
+                  image: image!,
+                  onResult: (image, width, height) {
                     sendResultImage(image, context);
                   },
                 ),

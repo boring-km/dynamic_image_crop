@@ -2,9 +2,9 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:dynamic_image_crop/src/image_utils.dart';
 import 'package:dynamic_image_crop/src/controller/crop_controller.dart';
 import 'package:dynamic_image_crop/src/crop/crop_type.dart';
+import 'package:dynamic_image_crop/src/image_utils.dart';
 import 'package:dynamic_image_crop/src/ui/drawing_view.dart';
 import 'package:dynamic_image_crop/src/ui/figure_shape_view.dart';
 import 'package:flutter/material.dart';
@@ -12,28 +12,28 @@ import 'package:flutter/material.dart';
 class DynamicImageCrop extends StatefulWidget {
 
   const DynamicImageCrop({
-    required this.initialImage,
+    required this.image,
     required this.controller,
-    required this.cropResult,
-    this.lineColor,
-    this.strokeWidth,
+    required this.onResult,
+    this.cropLineColor,
+    this.cropLineStrokeWidth,
     super.key,
   });
 
   DynamicImageCrop.fromFile({
     required File imageFile,
     required this.controller,
-    required this.cropResult,
-    this.lineColor,
-    this.strokeWidth,
+    required this.onResult,
+    this.cropLineColor,
+    this.cropLineStrokeWidth,
     super.key,
-  }) : initialImage = imageFile.readAsBytesSync();
+  }) : image = imageFile.readAsBytesSync();
 
-  final Uint8List initialImage;
+  final Uint8List image;
   final CropController controller;
-  final void Function(Uint8List resultImage, int width, int height) cropResult;
-  final Color? lineColor;
-  final double? strokeWidth;
+  final void Function(Uint8List resultImage, int width, int height) onResult;
+  final Color? cropLineColor;
+  final double? cropLineStrokeWidth;
 
   @override
   State<DynamicImageCrop> createState() => _DynamicImageCropState();
@@ -41,11 +41,11 @@ class DynamicImageCrop extends StatefulWidget {
 
 class _DynamicImageCropState extends State<DynamicImageCrop> {
 
-  late final callback = widget.cropResult;
+  late final callback = widget.onResult;
   late final controller = widget.controller;
 
-  late final lineColor = widget.lineColor ?? const Color(0xffff572b);
-  late final strokeWidth = widget.strokeWidth ?? 2.0;
+  late final lineColor = widget.cropLineColor ?? const Color(0xffff572b);
+  late final strokeWidth = widget.cropLineStrokeWidth ?? 2.0;
 
   double painterWidth = 0;
   double painterHeight = 0;
@@ -59,7 +59,7 @@ class _DynamicImageCropState extends State<DynamicImageCrop> {
   @override
   void initState() {
     controller.init(
-      image: widget.initialImage,
+      image: widget.image,
       callback: callback,
       painterKey: painterKey,
       drawingKey: drawingKey,

@@ -46,7 +46,7 @@ class CropController {
       final area = cropType == CropType.drawing
           ? drawingKey.currentState!.getDrawingArea()
           : painterKey.currentState!.getPainterArea();
-      callbackToParentWidget(area, cropType);
+      _callbackToParentWidget(area, cropType);
     }
   }
 
@@ -54,11 +54,11 @@ class CropController {
     imageNotifier.set(image);
   }
 
-  Future<void> callbackToParentWidget(
+  Future<void> _callbackToParentWidget(
     CropArea area,
     CropType cropType,
   ) async {
-    final rect = calculateCropArea(
+    final rect = _calculateCropArea(
       area: area,
       imageSize: Size(painterWidth, painterHeight),
     );
@@ -78,13 +78,13 @@ class CropController {
 
     ui.Image result;
     if (cropType == CropType.drawing) {
-      result = await getDrawingImage(
+      result = await _getDrawingImage(
         crop: rect,
         cropCenter: cropCenter,
         image: decoded,
         area: area,
       );
-      result = await getCropImage(
+      result = await _getCropImage(
         pictureRecorder: pictureRecorder,
         canvas: canvas,
         cropCenter: cropCenter,
@@ -102,7 +102,7 @@ class CropController {
         result.height,
       );
     } else {
-      result = await getCropImage(
+      result = await _getCropImage(
         pictureRecorder: pictureRecorder,
         canvas: canvas,
         cropCenter: cropCenter,
@@ -122,7 +122,7 @@ class CropController {
     }
   }
 
-  static Future<ui.Image> getCropImage({
+  static Future<ui.Image> _getCropImage({
     required ui.PictureRecorder pictureRecorder,
     required ui.Canvas canvas,
     required Offset cropCenter,
@@ -160,7 +160,7 @@ class CropController {
         .toImage(cropWidth.round(), cropHeight.round());
   }
 
-  Future<ui.Image> getDrawingImage({
+  Future<ui.Image> _getDrawingImage({
     required ui.Rect crop,
     required Offset cropCenter,
     required ui.Image image,
@@ -188,7 +188,7 @@ class CropController {
     return pictureRecorder.endRecording().toImage(image.width, image.height);
   }
 
-  Rect calculateCropArea({
+  Rect _calculateCropArea({
     required CropArea area,
     required Size imageSize,
   }) {
