@@ -1,3 +1,7 @@
+## 0.0.3
+
+* Change LICENSE text
+
 ## 0.0.2
 
 * Update README.md
