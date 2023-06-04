@@ -1,3 +1,9 @@
+## 0.0.4
+
+* Update Package Description
+* Add dartdoc comments
+* Code Refactoring
+
 ## 0.0.3
 
 * Change LICENSE text

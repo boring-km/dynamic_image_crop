@@ -12,8 +12,8 @@ You can test the package by this link: [demo_link](https://boring-km.dev/dynamic
 
 dynamic_image_crop supports the following features:
 
-- Crop an image into rectangle, circle, triangle shapes.
 - Crop an image into user drawing shapes.
+- Crop an image into rectangle, circle, triangle shapes.
 - Change the color of the crop shape line.
 - Change the width of the crop shape line.
 
@@ -49,6 +49,7 @@ DynamicImageCrop.fromFile(
 void cropImage() {}
 void changeType(CropType type) {}
 void changeImage(Uint8List image) {}
+void clearCropArea() {}
 ```
 
 ```CropType``` has the following types:
