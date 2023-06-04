@@ -11,6 +11,11 @@ import 'package:flutter/material.dart';
 
 class DynamicImageCrop extends StatefulWidget {
 
+  /// Input image as bytes([Uint8List]).
+  ///
+  /// Declare [CropController] variable and input it to control this Widget.
+  ///
+  /// [onResult] is a callback function that returns the cropped image, width, and height.
   const DynamicImageCrop({
     required this.image,
     required this.controller,
@@ -20,6 +25,11 @@ class DynamicImageCrop extends StatefulWidget {
     super.key,
   });
 
+  /// Input image as File.
+  ///
+  /// Declare [CropController] variable and input it to control this Widget.
+  ///
+  /// [onResult] is a callback function that returns the cropped image, width, and height.
   DynamicImageCrop.fromFile({
     required File imageFile,
     required this.controller,
@@ -162,7 +172,7 @@ class _DynamicImageCropState extends State<DynamicImageCrop> {
       }
       setState(() {
         imageSize = Size(painterWidth, painterHeight);
-        controller.set(painterWidth, painterHeight);
+        controller.painterSize = imageSize!;
       });
     });
   }

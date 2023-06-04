@@ -1,10 +1,10 @@
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
+import 'package:dynamic_image_crop/dynamic_image_crop.dart';
 import 'package:dynamic_image_crop/src/controller/crop_type_notifier.dart';
 import 'package:dynamic_image_crop/src/controller/image_change_notifier.dart';
 import 'package:dynamic_image_crop/src/crop/crop_area.dart';
-import 'package:dynamic_image_crop/src/crop/crop_type.dart';
 import 'package:dynamic_image_crop/src/image_utils.dart';
 import 'package:dynamic_image_crop/src/shape_painter/circle_painter.dart';
 import 'package:dynamic_image_crop/src/shape_painter/drawing_painter.dart';
@@ -14,17 +14,23 @@ import 'package:dynamic_image_crop/src/ui/drawing_view.dart';
 import 'package:dynamic_image_crop/src/ui/figure_shape_view.dart';
 import 'package:flutter/material.dart';
 
+/// CropController is a controller for [DynamicImageCrop].
 class CropController {
-  double painterWidth = 0;
-  double painterHeight = 0;
 
-  final cropTypeNotifier = CropTypeNotifier();
-  final imageNotifier = ImageChangeNotifier();
+  /// The size of the visible painter.
+  Size painterSize = Size.zero;
 
-  late void Function(Uint8List, int, int) callback;
-  late GlobalKey<FigureShapeViewState> painterKey;
-  late GlobalKey<DrawingViewState> drawingKey;
+  final _cropTypeNotifier = CropTypeNotifier();
+  CropTypeNotifier get cropTypeNotifier => _cropTypeNotifier;
 
+  final _imageNotifier = ImageChangeNotifier();
+  ImageChangeNotifier get imageNotifier => _imageNotifier;
+
+  late void Function(Uint8List, int, int) _callback;
+  late GlobalKey<FigureShapeViewState> _painterKey;
+  late GlobalKey<DrawingViewState> _drawingKey;
+
+  /// initialize the controller after [DynamicImageCrop] build.
   void init({
     required Uint8List image,
     required void Function(Uint8List, int, int) callback,
@@ -32,27 +38,29 @@ class CropController {
     required GlobalKey<DrawingViewState> drawingKey,
   }) {
     imageNotifier.set(image);
-    this.callback = callback;
-    this.painterKey = painterKey;
-    this.drawingKey = drawingKey;
+    _callback = callback;
+    _painterKey = painterKey;
+    _drawingKey = drawingKey;
   }
 
+  /// Crop the image as you can see on the screen.
   void cropImage() {
     final cropType = cropTypeNotifier.cropType;
     if (cropType == CropType.none) {
-      callback(
+      _callback(
         imageNotifier.image,
-        painterWidth.floor(),
-        painterHeight.floor(),
+        painterSize.width.floor(),
+        painterSize.height.floor(),
       );
     } else {
       final area = cropType == CropType.drawing
-          ? drawingKey.currentState!.getDrawingArea()
-          : painterKey.currentState!.getPainterArea();
+          ? _drawingKey.currentState!.getDrawingArea()
+          : _painterKey.currentState!.getPainterArea();
       _callbackToParentWidget(area, cropType);
     }
   }
 
+  /// Change the image to crop without setState((){}).
   void changeImage(Uint8List image) {
     imageNotifier.set(image);
   }
@@ -63,7 +71,7 @@ class CropController {
   ) async {
     final rect = _calculateCropArea(
       area: area,
-      imageSize: Size(painterWidth, painterHeight),
+      imageSize: painterSize,
     );
 
     final decoded = await decodeImageFromList(imageNotifier.image);
@@ -97,7 +105,7 @@ class CropController {
         cropType: CropType.rectangle,
       );
       // callback to the parent widget
-      callback(
+      _callback(
         await result
             .toByteData(format: ui.ImageByteFormat.png)
             .then((value) => value!.buffer.asUint8List()),
@@ -115,7 +123,7 @@ class CropController {
         cropType: cropType,
       );
       // callback to the parent widget
-      callback(
+      _callback(
         await result
             .toByteData(format: ui.ImageByteFormat.png)
             .then((value) => value!.buffer.asUint8List()),
@@ -176,11 +184,11 @@ class CropController {
     final cropHeight = crop.height * image.height;
 
     DrawingCropPainter(
-      drawingKey.currentState!.points,
-      drawingKey.currentState!.first,
+      _drawingKey.currentState!.points,
+      _drawingKey.currentState!.first,
       cropCenter,
       image,
-      ImageUtils.getRatio(image, Size(painterWidth, painterHeight)),
+      ImageUtils.getRatio(image, painterSize),
       crop,
     ).paint(
       canvas,
@@ -204,12 +212,15 @@ class CropController {
     return Rect.fromLTWH(fromLeft, fromTop, width, height);
   }
 
+  /// Change Crop Type Without setState((){}).
+  /// Changeable Crop Type: [CropType.rectangle], [CropType.circle], [CropType.triangle], [CropType.drawing], [CropType.none]
+  /// if change CropType to [CropType.none], then remove the crop area.
   void changeType(CropType type) {
     cropTypeNotifier.set(type);
   }
 
-  void set(double painterWidth, double painterHeight) {
-    this.painterWidth = painterWidth;
-    this.painterHeight = painterHeight;
+  /// Clear Crop Area Without setState((){}).
+  void clearCropArea() {
+    cropTypeNotifier.set(CropType.none);
   }
 }

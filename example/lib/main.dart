@@ -182,7 +182,7 @@ class _CropScreenState extends State<CropScreen> {
         ),
         const SizedBox(width: 8),
         IconButton(
-          onPressed: () => changeShape(CropType.none),
+          onPressed: cropController.clearCropArea,
           icon: const Icon(
             CupertinoIcons.clear_circled_solid,
             color: Colors.white,
