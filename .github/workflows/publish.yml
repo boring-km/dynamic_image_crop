@@ -7,6 +7,22 @@ on:
 
 jobs:
   publish:
-    uses: dart-lang/setup-dart/.github/workflows/publish.yml@v1
-    # with:
-    #   working-directory: path/to/package/within/repository
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2.10.0
+        with:
+          flutter-version: '3.10.2'
+      - name: Install packages
+        run: flutter pub get
+      - name: Setup Pub Credentials
+        shell: bash
+        env:
+          INPUT_CREDENTIAL: ${{ secrets.CREDENTIAL_JSON }}
+        run: |
+          sh ./pub_login.sh
+      - name: Check Publish Warnings
+        run: dart pub publish --dry-run
+      - name: Publish Package
+        run: dart pub publish -f

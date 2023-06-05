@@ -5,8 +5,8 @@ on:
       - 'README.md'
       - 'LICENSE'
       - 'CHANGELOG.md'
-    branches:
-      - master
+    tags:
+      - 'example'
 jobs:
   build:
     name: Build Web
