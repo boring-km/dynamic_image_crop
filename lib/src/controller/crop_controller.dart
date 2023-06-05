@@ -16,14 +16,15 @@ import 'package:flutter/material.dart';
 
 /// CropController is a controller for [DynamicImageCrop].
 class CropController {
-
   /// The size of the visible painter.
   Size painterSize = Size.zero;
 
   final _cropTypeNotifier = CropTypeNotifier();
+
   CropTypeNotifier get cropTypeNotifier => _cropTypeNotifier;
 
   final _imageNotifier = ImageChangeNotifier();
+
   ImageChangeNotifier get imageNotifier => _imageNotifier;
 
   late void Function(Uint8List, int, int) _callback;
@@ -33,11 +34,12 @@ class CropController {
   /// initialize the controller after [DynamicImageCrop] build.
   void init({
     required Uint8List image,
+    required ui.ImageByteFormat imageByteFormat,
     required void Function(Uint8List, int, int) callback,
     required GlobalKey<FigureShapeViewState> painterKey,
     required GlobalKey<DrawingViewState> drawingKey,
   }) {
-    imageNotifier.set(image);
+    imageNotifier.set(image, imageByteFormat: imageByteFormat);
     _callback = callback;
     _painterKey = painterKey;
     _drawingKey = drawingKey;
@@ -61,8 +63,8 @@ class CropController {
   }
 
   /// Change the image to crop without setState((){}).
-  void changeImage(Uint8List image) {
-    imageNotifier.set(image);
+  void changeImage(Uint8List image, {ui.ImageByteFormat? imageByteFormat}) {
+    imageNotifier.set(image, imageByteFormat: imageByteFormat);
   }
 
   Future<void> _callbackToParentWidget(
@@ -107,7 +109,7 @@ class CropController {
       // callback to the parent widget
       _callback(
         await result
-            .toByteData(format: ui.ImageByteFormat.png)
+            .toByteData(format: imageNotifier.imageByteFormat)
             .then((value) => value!.buffer.asUint8List()),
         result.width,
         result.height,
@@ -125,7 +127,7 @@ class CropController {
       // callback to the parent widget
       _callback(
         await result
-            .toByteData(format: ui.ImageByteFormat.png)
+            .toByteData(format: imageNotifier.imageByteFormat)
             .then((value) => value!.buffer.asUint8List()),
         result.width,
         result.height,

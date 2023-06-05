@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
+import 'dart:ui' as ui;
 
 import 'package:dynamic_image_crop/src/controller/crop_controller.dart';
 import 'package:dynamic_image_crop/src/crop/crop_type.dart';
@@ -20,6 +21,7 @@ class DynamicImageCrop extends StatefulWidget {
     required this.image,
     required this.controller,
     required this.onResult,
+    this.imageByteFormat,
     this.cropLineColor,
     this.cropLineWidth,
     super.key,
@@ -34,6 +36,7 @@ class DynamicImageCrop extends StatefulWidget {
     required File imageFile,
     required this.controller,
     required this.onResult,
+    this.imageByteFormat,
     this.cropLineColor,
     this.cropLineWidth,
     super.key,
@@ -42,6 +45,7 @@ class DynamicImageCrop extends StatefulWidget {
   final Uint8List image;
   final CropController controller;
   final void Function(Uint8List resultImage, int width, int height) onResult;
+  final ui.ImageByteFormat? imageByteFormat;
   final Color? cropLineColor;
   final double? cropLineWidth;
 
@@ -53,6 +57,7 @@ class _DynamicImageCropState extends State<DynamicImageCrop> {
 
   late final callback = widget.onResult;
   late final controller = widget.controller;
+  late final imageByteFormat = widget.imageByteFormat ?? ui.ImageByteFormat.png;
 
   late final lineColor = widget.cropLineColor ?? const Color(0xffff572b);
   late final strokeWidth = widget.cropLineWidth ?? 2.0;
@@ -70,6 +75,7 @@ class _DynamicImageCropState extends State<DynamicImageCrop> {
   void initState() {
     controller.init(
       image: widget.image,
+      imageByteFormat: imageByteFormat,
       callback: callback,
       painterKey: painterKey,
       drawingKey: drawingKey,

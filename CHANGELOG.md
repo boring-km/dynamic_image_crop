@@ -1,3 +1,7 @@
+## 0.0.5
+
+* Add ImageByteFormat Option (default is png)
+
 ## 0.0.4
 
 * Update Package Description
