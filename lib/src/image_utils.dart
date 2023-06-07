@@ -4,12 +4,11 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 
 class ImageUtils {
-  static ui.Size getPainterSize(BuildContext context) {
-    final deviceSize = MediaQuery.of(context).size;
-
-    final deviceWidth = deviceSize.width;
-    final deviceHeight = deviceSize.height;
-    return Size(deviceWidth, deviceHeight);
+  static ui.Size getPainterSize(BoxConstraints constraints) {
+    return Size(
+      constraints.maxWidth,
+      constraints.maxHeight,
+    );
   }
 
   static Future<void> getImageSize(
