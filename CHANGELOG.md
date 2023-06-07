@@ -1,3 +1,9 @@
+## 0.0.6
+
+* Redraw Image when DynamicImageCrop Widget size changed.
+
+```dart
+
 ## 0.0.5
 
 * Add ImageByteFormat Option (default is png)
