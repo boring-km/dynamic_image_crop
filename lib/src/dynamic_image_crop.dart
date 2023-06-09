@@ -63,7 +63,7 @@ class _DynamicImageCropState extends State<DynamicImageCrop> {
   late final lineColor = widget.cropLineColor ?? const Color(0xffff572b);
   late final strokeWidth = widget.cropLineWidth ?? 2.0;
 
-  final _boxConstraintsNotifier = BoxConstraintsNotifier();
+  final boxConstraintsNotifier = BoxConstraintsNotifier();
 
   double painterWidth = 0;
   double painterHeight = 0;
@@ -90,7 +90,10 @@ class _DynamicImageCropState extends State<DynamicImageCrop> {
         controller.imageNotifier.addListener(() {
           getImageInfo(controller.imageNotifier.image);
         });
-        _boxConstraintsNotifier.addListener(() {
+        boxConstraintsNotifier.addListener(() {
+          getImageInfo(controller.imageNotifier.image);
+        });
+        controller.cropTypeNotifier.addListener(() {
           getImageInfo(controller.imageNotifier.image);
         });
       });
@@ -99,49 +102,41 @@ class _DynamicImageCropState extends State<DynamicImageCrop> {
 
   @override
   Widget build(BuildContext context) {
+    if (imageSize == null) return Container();
     return LayoutBuilder(
       builder: (context, constraints) {
-        _boxConstraintsNotifier.setConstraints(constraints);
-        return ListenableBuilder(
-          listenable: controller.imageNotifier,
-          builder: (pc, _) {
-            return ListenableBuilder(
-              listenable: controller.cropTypeNotifier,
-              builder: (c, _) {
-                if (imageSize == null) return Container();
-                if (controller.cropTypeNotifier.cropType == CropType.none) {
-                  return backgroundImage();
-                }
-                if (controller.cropTypeNotifier.cropType == CropType.drawing) {
-                  return Stack(
-                    children: [
-                      backgroundImage(),
-                      DrawingView(
-                        painterWidth: imageSize!.width,
-                        painterHeight: imageSize!.height,
-                        lineColor: lineColor,
-                        strokeWidth: strokeWidth,
-                        key: drawingKey,
-                      ),
-                    ],
-                  );
-                }
-                return Stack(
-                  children: [
-                    backgroundImage(),
-                    FigureShapeView(
-                      painterWidth: imageSize!.width,
-                      painterHeight: imageSize!.height,
-                      shapeNotifier: controller.cropTypeNotifier,
-                      lineColor: lineColor,
-                      strokeWidth: strokeWidth,
-                      key: painterKey,
-                    ),
-                  ],
-                );
-              },
-            );
-          },
+        if (boxConstraintsNotifier.constraints != constraints) {
+          boxConstraintsNotifier.setConstraints(constraints);
+        }
+        if (controller.cropTypeNotifier.cropType == CropType.none) {
+          return backgroundImage();
+        }
+        if (controller.cropTypeNotifier.cropType == CropType.drawing) {
+          return Stack(
+            children: [
+              backgroundImage(),
+              DrawingView(
+                painterWidth: imageSize!.width,
+                painterHeight: imageSize!.height,
+                lineColor: lineColor,
+                strokeWidth: strokeWidth,
+                key: drawingKey,
+              ),
+            ],
+          );
+        }
+        return Stack(
+          children: [
+            backgroundImage(),
+            FigureShapeView(
+              painterWidth: imageSize!.width,
+              painterHeight: imageSize!.height,
+              shapeNotifier: controller.cropTypeNotifier,
+              lineColor: lineColor,
+              strokeWidth: strokeWidth,
+              key: painterKey,
+            ),
+          ],
         );
       },
     );
@@ -157,7 +152,7 @@ class _DynamicImageCropState extends State<DynamicImageCrop> {
   }
 
   Future<void> getImageInfo(Uint8List image) async {
-    final s = ImageUtils.getPainterSize(_boxConstraintsNotifier.constraints);
+    final s = ImageUtils.getPainterSize(boxConstraintsNotifier.constraints);
     final deviceWidth = s.width;
     final deviceHeight = s.height;
 
