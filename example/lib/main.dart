@@ -77,8 +77,6 @@ class _CropScreenState extends State<CropScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-
     return Scaffold(
       backgroundColor: Colors.black,
       floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
@@ -88,71 +86,73 @@ class _CropScreenState extends State<CropScreen> {
         label: const Text('Crop', style: TextStyle(color: Colors.black)),
       ),
       body: SafeArea(
-        child: Stack(
-          children: [
-            if (image == null)
-              const Center(child: CircularProgressIndicator())
-            else
-              Center(
-                child: DynamicImageCrop(
-                  controller: cropController,
-                  image: image!,
-                  onResult: (image, width, height) {
-                    sendResultImage(image, context);
-                  },
-                ),
-              ),
-            const Center(),
-            Positioned(
-              width: size.width,
-              bottom: 0,
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                color: Colors.black,
-                child: Center(
-                  child: Column(
-                    children: [
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: buildButtons(),
+        child: Builder(
+          builder: (context) {
+            if (image == null) {
+              return const Center(child: CircularProgressIndicator());
+            } else {
+              return Column(
+                children: [
+                  Expanded(
+                    child: Center(
+                      child: DynamicImageCrop(
+                        controller: cropController,
+                        image: image!,
+                        onResult: (image, width, height) {
+                          sendResultImage(image, context);
+                        },
                       ),
-                      Row(
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    color: Colors.black,
+                    child: Center(
+                      child: Column(
                         children: [
-                          Expanded(
-                            child: TextField(
-                              controller: urlController,
-                              decoration: const InputDecoration(
-                                hintText: 'Enter URL',
-                              ),
-                              onChanged: (value) {
-                                urlController.text = value;
-                              },
-                              style: const TextStyle(color: Colors.white),
-                            ),
+                          SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: buildButtons(),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 8),
-                            child: IconButton(
-                              onPressed: () {
-                                loadImage(
-                                  urlController.text,
-                                  callback: cropController.changeImage,
-                                );
-                              },
-                              icon: const Icon(
-                                CupertinoIcons.search_circle_fill,
-                                color: Colors.white,
+                          Row(
+                            children: [
+                              Expanded(
+                                child: TextField(
+                                  controller: urlController,
+                                  decoration: const InputDecoration(
+                                    hintText: 'Enter URL',
+                                  ),
+                                  onChanged: (value) {
+                                    urlController.text = value;
+                                  },
+                                  style: const TextStyle(color: Colors.white),
+                                ),
                               ),
-                            ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 8),
+                                child: IconButton(
+                                  onPressed: () {
+                                    loadImage(
+                                      urlController.text,
+                                      callback: cropController.changeImage,
+                                    );
+                                  },
+                                  icon: const Icon(
+                                    CupertinoIcons.search_circle_fill,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
+                    ),
+                  )
+                ],
+              );
+            }
+          },
         ),
       ),
     );
