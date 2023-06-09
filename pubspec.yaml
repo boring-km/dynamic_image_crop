@@ -1,6 +1,6 @@
 name: dynamic_image_crop
 description: A Flutter Package that crops the image by drawing lines or cropping into various shapes.
-version: 0.0.6
+version: 0.0.7
 repository: https://github.com/boring-km/dynamic_image_crop
 issue_tracker: https://github.com/boring-km/dynamic_image_crop/issues
 

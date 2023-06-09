@@ -1,3 +1,8 @@
+## 0.0.7
+
+* Change example Widget stack to Column
+* Remove recursive setState(() {});
+
 ## 0.0.6
 
 * Redraw Image when DynamicImageCrop Widget size changed.
