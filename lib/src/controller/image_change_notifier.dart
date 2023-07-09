@@ -4,12 +4,15 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 
 class ImageChangeNotifier with ChangeNotifier {
-  Uint8List image = Uint8List(0);
-  ui.ImageByteFormat imageByteFormat = ui.ImageByteFormat.png;
+  Uint8List _image = Uint8List(0);
+  Uint8List get image => _image;
+
+  ui.ImageByteFormat _imageByteFormat = ui.ImageByteFormat.png;
+  ui.ImageByteFormat get imageByteFormat => _imageByteFormat;
 
   void set(Uint8List image, {ui.ImageByteFormat? imageByteFormat}) {
-    this.image = image;
-    this.imageByteFormat = imageByteFormat ?? ui.ImageByteFormat.png;
+    _image = image;
+    _imageByteFormat = imageByteFormat ?? ui.ImageByteFormat.png;
     notifyListeners();
   }
 }

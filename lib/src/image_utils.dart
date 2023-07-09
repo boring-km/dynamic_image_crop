@@ -11,10 +11,10 @@ class ImageUtils {
     );
   }
 
-  static Future<void> getImageSize(
+  static void getImageSize(
     Uint8List imageList,
     void Function(double, double) callback,
-  ) async {
+  ) {
     ui.decodeImageFromList(imageList, (image) {
       callback(image.width.toDouble(), image.height.toDouble());
     });

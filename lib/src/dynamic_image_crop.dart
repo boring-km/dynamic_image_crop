@@ -156,7 +156,7 @@ class _DynamicImageCropState extends State<DynamicImageCrop> {
     final deviceWidth = s.width;
     final deviceHeight = s.height;
 
-    await ImageUtils.getImageSize(image, (imageWidth, imageHeight) async {
+    ImageUtils.getImageSize(image, (imageWidth, imageHeight) async {
       final isImageWidthLonger = imageWidth > imageHeight;
 
       if (isImageWidthLonger) {
@@ -183,7 +183,6 @@ class _DynamicImageCropState extends State<DynamicImageCrop> {
           painterHeight = painterHeight * ratio;
         }
       }
-      if (!mounted) return;
       setState(() {
         imageSize = Size(painterWidth, painterHeight);
         controller.painterSize = imageSize!;
