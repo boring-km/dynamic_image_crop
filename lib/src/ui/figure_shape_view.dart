@@ -1,6 +1,5 @@
 // ignore_for_file: non_constant_identifier_names
 
-import 'package:dynamic_image_crop/src/controller/crop_type_notifier.dart';
 import 'package:dynamic_image_crop/src/crop/crop_area.dart';
 import 'package:dynamic_image_crop/src/crop/crop_type.dart';
 import 'package:dynamic_image_crop/src/shape_painter/circle_painter.dart';
@@ -23,7 +22,7 @@ class FigureShapeView extends StatefulWidget {
   final double painterWidth;
   final double painterHeight;
   final double movingDotSize;
-  final CropTypeNotifier shapeNotifier;
+  final ValueNotifier<CropType> shapeNotifier;
   final Color lineColor;
   final double strokeWidth;
 
@@ -42,20 +41,25 @@ class FigureShapeViewState extends State<FigureShapeView> {
   late double strokeWidth = widget.strokeWidth;
   late double pointerSize = widget.movingDotSize;
   late double radius = widget.movingDotSize / 2;
-  late CropTypeNotifier st = widget.shapeNotifier;
+  late ValueNotifier<CropType> st = widget.shapeNotifier;
 
   bool imageLoaded = false;
   bool isImageLoaded = false;
-
-  @override
-  void initState() {
-    xPos = (widget.painterWidth - shapeWidth) / 2;
-    yPos = (widget.painterHeight - shapeHeight) / 2;
-    super.initState();
-  }
+  bool positionInitialized = false;
 
   @override
   Widget build(BuildContext context) {
+
+    if (widget.painterWidth == double.infinity) return Container();
+
+    if (!positionInitialized) {
+      setState(() {
+        xPos = (widget.painterWidth - shapeWidth) / 2;
+        yPos = (widget.painterHeight - shapeHeight) / 2;
+        positionInitialized = true;
+      });
+    }
+
     return SizedBox(
       width: widget.painterWidth,
       height: widget.painterHeight,
@@ -68,7 +72,7 @@ class FigureShapeViewState extends State<FigureShapeView> {
             child: ListenableBuilder(
               listenable: st,
               builder: (context, _) {
-                if (st.cropType == CropType.rectangle) {
+                if (st.value == CropType.rectangle) {
                   return CustomPaint(
                     painter: RectanglePainter(
                       Rect.fromLTWH(
@@ -82,7 +86,7 @@ class FigureShapeViewState extends State<FigureShapeView> {
                     ),
                     child: Container(),
                   );
-                } else if (st.cropType == CropType.circle) {
+                } else if (st.value == CropType.circle) {
                   return CustomPaint(
                     painter: CirclePainter(
                       Rect.fromLTWH(
@@ -96,7 +100,7 @@ class FigureShapeViewState extends State<FigureShapeView> {
                     ),
                     child: Container(),
                   );
-                } else if (st.cropType == CropType.triangle) {
+                } else if (st.value == CropType.triangle) {
                   return CustomPaint(
                     painter: TrianglePainter(
                       Rect.fromLTWH(

@@ -3,7 +3,6 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
-import 'package:dynamic_image_crop/src/controller/box_constraints_notifier.dart';
 import 'package:dynamic_image_crop/src/controller/crop_controller.dart';
 import 'package:dynamic_image_crop/src/crop/crop_type.dart';
 import 'package:dynamic_image_crop/src/image_utils.dart';
@@ -12,7 +11,6 @@ import 'package:dynamic_image_crop/src/ui/figure_shape_view.dart';
 import 'package:flutter/material.dart';
 
 class DynamicImageCrop extends StatefulWidget {
-
   /// Input image as bytes([Uint8List]).
   ///
   /// Declare [CropController] variable and input it to control this Widget.
@@ -55,7 +53,6 @@ class DynamicImageCrop extends StatefulWidget {
 }
 
 class _DynamicImageCropState extends State<DynamicImageCrop> {
-
   late final callback = widget.onResult;
   late final controller = widget.controller;
   late final imageByteFormat = widget.imageByteFormat ?? ui.ImageByteFormat.png;
@@ -63,7 +60,7 @@ class _DynamicImageCropState extends State<DynamicImageCrop> {
   late final lineColor = widget.cropLineColor ?? const Color(0xffff572b);
   late final strokeWidth = widget.cropLineWidth ?? 2.0;
 
-  final boxConstraintsNotifier = BoxConstraintsNotifier();
+  final boxConstraintsNotifier = ValueNotifier(const BoxConstraints());
 
   double painterWidth = 0;
   double painterHeight = 0;
@@ -71,8 +68,6 @@ class _DynamicImageCropState extends State<DynamicImageCrop> {
   final myKey = GlobalKey();
   final painterKey = GlobalKey<FigureShapeViewState>();
   final drawingKey = GlobalKey<DrawingViewState>();
-
-  Size? imageSize;
 
   @override
   void initState() {
@@ -102,41 +97,46 @@ class _DynamicImageCropState extends State<DynamicImageCrop> {
 
   @override
   Widget build(BuildContext context) {
-    if (imageSize == null) return Container();
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        if (boxConstraintsNotifier.constraints != constraints) {
-          boxConstraintsNotifier.setConstraints(constraints);
-        }
-        if (controller.cropTypeNotifier.cropType == CropType.none) {
-          return backgroundImage();
-        }
-        if (controller.cropTypeNotifier.cropType == CropType.drawing) {
-          return Stack(
-            children: [
-              backgroundImage(),
-              DrawingView(
-                painterWidth: imageSize!.width,
-                painterHeight: imageSize!.height,
-                lineColor: lineColor,
-                strokeWidth: strokeWidth,
-                key: drawingKey,
-              ),
-            ],
-          );
-        }
-        return Stack(
-          children: [
-            backgroundImage(),
-            FigureShapeView(
-              painterWidth: imageSize!.width,
-              painterHeight: imageSize!.height,
-              shapeNotifier: controller.cropTypeNotifier,
-              lineColor: lineColor,
-              strokeWidth: strokeWidth,
-              key: painterKey,
-            ),
-          ],
+    return ValueListenableBuilder<Size?>(
+      valueListenable: controller.imageSizeNotifier,
+      builder: (context, imageSize, child) {
+        if (imageSize == null) return Container();
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            if (boxConstraintsNotifier.value != constraints) {
+              boxConstraintsNotifier.value = constraints;
+            }
+            if (controller.cropTypeNotifier.value == CropType.none) {
+              return backgroundImage();
+            }
+            if (controller.cropTypeNotifier.value == CropType.drawing) {
+              return Stack(
+                children: [
+                  backgroundImage(),
+                  DrawingView(
+                    painterWidth: imageSize.width,
+                    painterHeight: imageSize.height,
+                    lineColor: lineColor,
+                    strokeWidth: strokeWidth,
+                    key: drawingKey,
+                  ),
+                ],
+              );
+            }
+            return Stack(
+              children: [
+                backgroundImage(),
+                FigureShapeView(
+                  painterWidth: imageSize.width,
+                  painterHeight: imageSize.height,
+                  shapeNotifier: controller.cropTypeNotifier,
+                  lineColor: lineColor,
+                  strokeWidth: strokeWidth,
+                  key: painterKey,
+                ),
+              ],
+            );
+          },
         );
       },
     );
@@ -152,7 +152,7 @@ class _DynamicImageCropState extends State<DynamicImageCrop> {
   }
 
   Future<void> getImageInfo(Uint8List image) async {
-    final s = ImageUtils.getPainterSize(boxConstraintsNotifier.constraints);
+    final s = ImageUtils.getPainterSize(boxConstraintsNotifier.value);
     final deviceWidth = s.width;
     final deviceHeight = s.height;
 
@@ -184,8 +184,9 @@ class _DynamicImageCropState extends State<DynamicImageCrop> {
         }
       }
       setState(() {
-        imageSize = Size(painterWidth, painterHeight);
-        controller.painterSize = imageSize!;
+        final size = Size(painterWidth, painterHeight);
+        controller.imageSizeNotifier.value = size;
+        controller.painterSize = size;
       });
     });
   }

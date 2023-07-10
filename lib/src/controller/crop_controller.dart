@@ -2,7 +2,6 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:dynamic_image_crop/dynamic_image_crop.dart';
-import 'package:dynamic_image_crop/src/controller/crop_type_notifier.dart';
 import 'package:dynamic_image_crop/src/controller/image_change_notifier.dart';
 import 'package:dynamic_image_crop/src/crop/crop_area.dart';
 import 'package:dynamic_image_crop/src/image_utils.dart';
@@ -19,13 +18,17 @@ class CropController {
   /// The size of the visible painter.
   Size painterSize = Size.zero;
 
-  final _cropTypeNotifier = CropTypeNotifier();
+  final _cropTypeNotifier = ValueNotifier(CropType.none);
 
-  CropTypeNotifier get cropTypeNotifier => _cropTypeNotifier;
+  ValueNotifier<CropType> get cropTypeNotifier => _cropTypeNotifier;
 
   final _imageNotifier = ImageChangeNotifier();
 
   ImageChangeNotifier get imageNotifier => _imageNotifier;
+
+  final _imageSizeNotifier = ValueNotifier<Size?>(null);
+
+  ValueNotifier<Size?> get imageSizeNotifier => _imageSizeNotifier;
 
   late void Function(Uint8List, int, int) _callback;
   late GlobalKey<FigureShapeViewState> _painterKey;
@@ -47,7 +50,7 @@ class CropController {
 
   /// Crop the image as you can see on the screen.
   void cropImage() {
-    final cropType = cropTypeNotifier.cropType;
+    final cropType = cropTypeNotifier.value;
     if (cropType == CropType.none) {
       _callback(
         imageNotifier.image,
@@ -218,11 +221,11 @@ class CropController {
   /// Changeable Crop Type: [CropType.rectangle], [CropType.circle], [CropType.triangle], [CropType.drawing], [CropType.none]
   /// if change CropType to [CropType.none], then remove the crop area.
   void changeType(CropType type) {
-    cropTypeNotifier.set(type);
+    _cropTypeNotifier.value = type;
   }
 
   /// Clear Crop Area Without setState((){}).
   void clearCropArea() {
-    cropTypeNotifier.set(CropType.none);
+    _cropTypeNotifier.value = CropType.none;
   }
 }
