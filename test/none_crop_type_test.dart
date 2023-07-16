@@ -44,12 +44,12 @@ void main() {
     );
     await tester.pumpWidget(testWidget);
 
-    await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
-    await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
+    await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
+    await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
 
     cropController.cropImage();
 
-    await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
-    await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
+    await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
+    await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
   });
 }

@@ -49,13 +49,13 @@ void main() {
       );
       await tester.pumpWidget(testWidget);
 
-      await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
-      await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
+      await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
+      await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
 
       cropController.cropImage();
 
-      await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
-      await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
+      await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
+      await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
     });
 
     testWidgets('triangle CropType success test', (tester) async {
@@ -79,13 +79,13 @@ void main() {
       );
       await tester.pumpWidget(testWidget);
 
-      await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
-      await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
+      await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
+      await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
 
       cropController.cropImage();
 
-      await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
-      await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
+      await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
+      await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
     });
 
     testWidgets('rectangle CropType success test', (tester) async {
@@ -109,13 +109,13 @@ void main() {
       );
       await tester.pumpWidget(testWidget);
 
-      await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
-      await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
+      await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
+      await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
 
       cropController.cropImage();
 
-      await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
-      await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
+      await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
+      await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
     });
   });
 
@@ -150,13 +150,13 @@ void main() {
       );
       await tester.pumpWidget(testWidget);
 
-      await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
-      await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
+      await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
+      await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
 
       cropController.cropImage();
 
-      await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
-      await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
+      await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
+      await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
     });
 
     testWidgets('triangle CropType success test', (tester) async {
@@ -180,13 +180,13 @@ void main() {
       );
       await tester.pumpWidget(testWidget);
 
-      await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
-      await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
+      await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
+      await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
 
       cropController.cropImage();
 
-      await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
-      await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
+      await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
+      await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
     });
 
     testWidgets('rectangle CropType success test', (tester) async {
@@ -210,13 +210,13 @@ void main() {
       );
       await tester.pumpWidget(testWidget);
 
-      await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
-      await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
+      await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
+      await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
 
       cropController.cropImage();
 
-      await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
-      await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
+      await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
+      await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
     });
   });
 
@@ -246,13 +246,13 @@ void main() {
     );
     await tester.pumpWidget(testWidget);
 
-    await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
-    await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
+    await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
+    await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
 
     cropController.cropImage();
 
-    await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
-    await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
+    await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
+    await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
   });
 
   testWidgets('crop vertical image in small screen', (tester) async {
@@ -281,12 +281,12 @@ void main() {
     );
     await tester.pumpWidget(testWidget);
 
-    await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
-    await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
+    await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
+    await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
 
     cropController.cropImage();
 
-    await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
-    await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
+    await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
+    await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
   });
 }

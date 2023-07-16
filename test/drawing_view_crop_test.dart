@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:typed_data';
-import 'dart:ui';
 
 import 'package:dynamic_image_crop/src/controller/crop_controller.dart';
 import 'package:dynamic_image_crop/src/crop/crop_type.dart';
@@ -52,8 +51,8 @@ void main() {
       );
       await tester.pumpWidget(testWidget);
 
-      await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
-      await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
+      await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
+      await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
 
       // draw a line in the shape of a square
       final drawingView = find.byType(DrawingView);
@@ -71,12 +70,12 @@ void main() {
       await gesture.moveTo(bottomLeft);
       await gesture.up();
 
-      await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
+      await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
 
       cropController.cropImage();
 
-      await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
-      await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
+      await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
+      await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
     });
 
     testWidgets('Drawing CropType throws an RangeError if no lines are drawn.', (tester) async {
@@ -91,8 +90,8 @@ void main() {
       );
       await tester.pumpWidget(testWidget);
 
-      await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
-      await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
+      await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
+      await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
 
       try {
         cropController.cropImage();
@@ -101,8 +100,8 @@ void main() {
         expect(e, isA<RangeError>());
       }
 
-      await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
-      await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
+      await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
+      await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
     });
   });
 
@@ -137,8 +136,8 @@ void main() {
       );
       await tester.pumpWidget(testWidget);
 
-      await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
-      await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
+      await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
+      await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
 
       // draw a line in the shape of a square
       final drawingView = find.byType(DrawingView);
@@ -156,12 +155,12 @@ void main() {
       await gesture.moveTo(bottomLeft);
       await gesture.up();
 
-      await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
+      await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
 
       cropController.cropImage();
 
-      await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
-      await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
+      await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
+      await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
     });
 
     testWidgets('Drawing CropType throws an RangeError if no lines are drawn.', (tester) async {
@@ -176,8 +175,8 @@ void main() {
       );
       await tester.pumpWidget(testWidget);
 
-      await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
-      await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
+      await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
+      await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
 
       try {
         cropController.cropImage();
@@ -186,8 +185,8 @@ void main() {
         expect(e, isA<RangeError>());
       }
 
-      await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
-      await waitAndPumpAndSettle(tester, const Duration(seconds: 1));
+      await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
+      await waitAndPumpAndSettle(tester, const Duration(milliseconds: 100));
     });
   });
 }

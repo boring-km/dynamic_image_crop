@@ -34,9 +34,7 @@ class DrawingPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true;
-  }
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
 
 class DrawingCropPainter extends CustomPainter {
@@ -93,8 +91,7 @@ class DrawingCropPainter extends CustomPainter {
       );
   }
 
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true;
-  }
+  // coverage:ignore-start
+  @override bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+  // coverage:ignore-end
 }

@@ -100,7 +100,7 @@ class FigureShapeViewState extends State<FigureShapeView> {
                     ),
                     child: Container(),
                   );
-                } else if (st.value == CropType.triangle) {
+                } else {  // triangle
                   return CustomPaint(
                     painter: TrianglePainter(
                       Rect.fromLTWH(
@@ -114,8 +114,6 @@ class FigureShapeViewState extends State<FigureShapeView> {
                     ),
                     child: Container(),
                   );
-                } else {
-                  return Container();
                 }
               },
             ),

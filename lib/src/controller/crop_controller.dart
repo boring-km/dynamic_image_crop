@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
@@ -68,6 +69,11 @@ class CropController {
   /// Change the image to crop without setState((){}).
   void changeImage(Uint8List image, {ui.ImageByteFormat? imageByteFormat}) {
     imageNotifier.set(image, imageByteFormat: imageByteFormat);
+  }
+
+  /// Change the image File to crop without setState((){}).
+  void changeImageFile(File file, {ui.ImageByteFormat? imageByteFormat}) {
+    imageNotifier.set(file.readAsBytesSync(), imageByteFormat: imageByteFormat);
   }
 
   Future<void> _callbackToParentWidget(
