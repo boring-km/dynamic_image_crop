@@ -7,6 +7,7 @@ on:
       - 'CHANGELOG.md'
     branches:
       - example_page
+
 jobs:
   build:
     name: Build Web
@@ -19,10 +20,6 @@ jobs:
         with:
           flutter-version: '3.10.5'
           channel: 'stable'
-      - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v3
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - run: flutter --version
       - run: |
           # 1. build flutter web 
