@@ -2,6 +2,10 @@
 
 A Flutter package to crop images into various shapes.
 
+codecov test: [![codecov](https://codecov.io/gh/boring-km/dynamic_image_crop/branch/master/graph/badge.svg?token=c8fbc37f-5266-4bdb-8b09-ccb7ba5bf711
+)](https://codecov.io/gh/boring-km/dynamic_image_crop)
+
+
 ## Introduction
 
 <img src="https://github.com/boring-km/dynamic_image_crop/raw/master/images/demo.gif" width="40%" alt="demo">
