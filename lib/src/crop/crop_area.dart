@@ -7,8 +7,4 @@ class CropArea {
   final double width;
   final double height;
 
-  @override
-  String toString() {
-    return 'left: $left, top: $top, width: $width, height: $height';
-  }
 }

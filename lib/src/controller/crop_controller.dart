@@ -166,8 +166,6 @@ class CropController {
         cropCenter,
         image,
       ).paint(canvas, Size(cropWidth, cropHeight));
-    } else {
-      throw Exception('Unknown shape type');
     }
 
     // html 렌더링을 사용하는 Web에서는 Picture.toImage()가 작동하지 않음

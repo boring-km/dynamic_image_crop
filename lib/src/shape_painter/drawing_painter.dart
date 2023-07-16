@@ -63,7 +63,6 @@ class DrawingCropPainter extends CustomPainter {
       final firstDx = first!.dx * ratio.width;
       final firstDy = first!.dy * ratio.height;
 
-      debugPrint('firstDx: $firstDx firstDy: $firstDy');
       path.moveTo(firstDx, firstDy);
       for (var i = 0; i < points.length - 1; i++) {
         if (points[i] != null && points[i + 1] != null) {
