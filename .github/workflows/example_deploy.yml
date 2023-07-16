@@ -7,6 +7,7 @@ on:
       - 'CHANGELOG.md'
     branches:
       - example_page
+
 jobs:
   build:
     name: Build Web

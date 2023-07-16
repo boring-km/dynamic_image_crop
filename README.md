@@ -1,5 +1,14 @@
 # dynamic_image_crop
 
+<p align="center">
+<a href="https://pub.dev/packages/dynamic_image_crop"><img src="https://img.shields.io/pub/v/dynamic_image_crop.svg" alt="Pub"></a>
+<a href="https://codecov.io/gh/boring-km/dynamic_image_crop"><img src="https://codecov.io/gh/boring-km/dynamic_image_crop/branch/master/graph/badge.svg?token=c8fbc37f-5266-4bdb-8b09-ccb7ba5bf711"/></a>
+<a href="https://boring-km.dev/dynamic_image_crop"><img src="https://img.shields.io/badge/flutter-demo-deepskyblue.svg" alt="Flutter Demo"></a>
+<a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-purple.svg" alt="License: MIT"></a>
+</p>
+
+---
+
 A Flutter package to crop images into various shapes.
 
 ## Introduction
