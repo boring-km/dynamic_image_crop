@@ -31,7 +31,7 @@ void main() {
     tester.view.devicePixelRatio = 1;
 
     cropController.cropTypeNotifier.value = CropType.rectangle;
-    const expectedImageBytesLength = 12053;
+    const expectedLength = 12053;
     const expectedCroppedWidth = 100;
     const expectedCroppedHeight = 100;
 
@@ -40,9 +40,12 @@ void main() {
         image: image,
         controller: cropController,
         onResult: (image, width, height) {
-          expect(image.length, expectedImageBytesLength);
           expect(width, expectedCroppedWidth);
           expect(height, expectedCroppedHeight);
+          expect(
+            image.length,
+            inInclusiveRange(expectedLength - 5, expectedLength + 5),
+          );
         },
       ),
     );

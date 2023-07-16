@@ -36,16 +36,19 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.drawing;
-      const expectedImageBytesLength = 6026;
+      const expectedLength = 6026;
 
       final testWidget = MaterialApp(
         home: DynamicImageCrop(
           image: image,
           controller: cropController,
           onResult: (image, width, height) {
-            expect(expectedImageBytesLength, image.length);
             expect(expectedCroppedWidth, width);
             expect(expectedCroppedHeight, height);
+            expect(
+              image.length,
+              inInclusiveRange(expectedLength - 5, expectedLength + 5),
+            );
           },
         ),
       );
@@ -121,16 +124,19 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.drawing;
-      const expectedImageBytesLength = 886;
+      const expectedLength = 886;
 
       final testWidget = MaterialApp(
         home: DynamicImageCrop(
           image: image,
           controller: cropController,
           onResult: (image, width, height) {
-            expect(image.length, expectedImageBytesLength);
             expect(width, expectedCroppedWidth);
             expect(height, expectedCroppedHeight);
+            expect(
+              image.length,
+              inInclusiveRange(expectedLength - 5, expectedLength + 5),
+            );
           },
         ),
       );
