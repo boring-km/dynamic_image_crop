@@ -32,7 +32,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.rectangle;
-      const expectedLength = 39034;
+      const expectedImageBytesLength = 39034;
 
       const expectedCroppedWidth = 200;
       const expectedCroppedHeight = 200;
@@ -42,10 +42,7 @@ void main() {
           image: image,
           controller: cropController,
           onResult: (image, width, height) {
-            expect(
-              image.length,
-              inInclusiveRange(expectedLength - 5, expectedLength + 5),
-            );
+            expect(image.length, expectedImageBytesLength);
             expect(width, expectedCroppedWidth);
             expect(height, expectedCroppedHeight);
           },
@@ -75,7 +72,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.rectangle;
-      const expectedLength = 12870;
+      const expectedImageBytesLength = 12870;
 
       const expectedCroppedWidth = 100;
       const expectedCroppedHeight = 200;
@@ -85,10 +82,7 @@ void main() {
           image: image,
           controller: cropController,
           onResult: (image, width, height) {
-            expect(
-              image.length,
-              inInclusiveRange(expectedLength - 5, expectedLength + 5),
-            );
+            expect(image.length, expectedImageBytesLength);
             expect(width, expectedCroppedWidth);
             expect(height, expectedCroppedHeight);
           },
@@ -118,7 +112,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.rectangle;
-      const expectedLength = 28980;
+      const expectedImageBytesLength = 28980;
 
       const expectedCroppedWidth = 200;
       const expectedCroppedHeight = 200;
@@ -128,10 +122,7 @@ void main() {
           image: image,
           controller: cropController,
           onResult: (image, width, height) {
-            expect(
-              image.length,
-              inInclusiveRange(expectedLength - 5, expectedLength + 5),
-            );
+            expect(image.length, expectedImageBytesLength);
             expect(width, expectedCroppedWidth);
             expect(height, expectedCroppedHeight);
           },
@@ -161,7 +152,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.rectangle;
-      const expectedLength = 20489;
+      const expectedImageBytesLength = 20489;
 
       const expectedCroppedWidth = 200;
       const expectedCroppedHeight = 100;
@@ -171,10 +162,7 @@ void main() {
           image: image,
           controller: cropController,
           onResult: (image, width, height) {
-            expect(
-              image.length,
-              inInclusiveRange(expectedLength - 5, expectedLength + 5),
-            );
+            expect(image.length, expectedImageBytesLength);
             expect(width, expectedCroppedWidth);
             expect(height, expectedCroppedHeight);
           },
@@ -204,7 +192,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.rectangle;
-      const expectedLength = 12972;
+      const expectedImageBytesLength = 12972;
 
       const expectedCroppedWidth = 200;
       const expectedCroppedHeight = 100;
@@ -214,10 +202,7 @@ void main() {
           image: image,
           controller: cropController,
           onResult: (image, width, height) {
-            expect(
-              image.length,
-              inInclusiveRange(expectedLength - 5, expectedLength + 5),
-            );
+            expect(image.length, expectedImageBytesLength);
             expect(width, expectedCroppedWidth);
             expect(height, expectedCroppedHeight);
           },
@@ -247,7 +232,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.rectangle;
-      const expectedLength = 51265;
+      const expectedImageBytesLength = 51265;
 
       const expectedCroppedWidth = 200;
       const expectedCroppedHeight = 200;
@@ -257,10 +242,7 @@ void main() {
           image: image,
           controller: cropController,
           onResult: (image, width, height) {
-            expect(
-              image.length,
-              inInclusiveRange(expectedLength - 5, expectedLength + 5),
-            );
+            expect(image.length, expectedImageBytesLength);
             expect(width, expectedCroppedWidth);
             expect(height, expectedCroppedHeight);
           },
@@ -290,7 +272,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.rectangle;
-      const expectedLength = 19989;
+      const expectedImageBytesLength = 19989;
 
       const expectedCroppedWidth = 100;
       const expectedCroppedHeight = 200;
@@ -300,10 +282,7 @@ void main() {
           image: image,
           controller: cropController,
           onResult: (image, width, height) {
-            expect(
-              image.length,
-              inInclusiveRange(expectedLength - 5, expectedLength + 5),
-            );
+            expect(image.length, expectedImageBytesLength);
             expect(width, expectedCroppedWidth);
             expect(height, expectedCroppedHeight);
           },
@@ -333,7 +312,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.rectangle;
-      const expectedLength = 38733;
+      const expectedImageBytesLength = 38733;
 
       const expectedCroppedWidth = 200;
       const expectedCroppedHeight = 200;
@@ -343,10 +322,7 @@ void main() {
           image: image,
           controller: cropController,
           onResult: (image, width, height) {
-            expect(
-              image.length,
-              inInclusiveRange(expectedLength - 5, expectedLength + 5),
-            );
+            expect(image.length, expectedImageBytesLength);
             expect(width, expectedCroppedWidth);
             expect(height, expectedCroppedHeight);
           },
@@ -378,7 +354,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.circle;
-      const expectedLength = 35273;
+      const expectedImageBytesLength = 35273;
 
       const expectedCroppedWidth = 200;
       const expectedCroppedHeight = 200;
@@ -388,10 +364,7 @@ void main() {
           image: image,
           controller: cropController,
           onResult: (image, width, height) {
-            expect(
-              image.length,
-              inInclusiveRange(expectedLength - 5, expectedLength + 5),
-            );
+            expect(image.length, expectedImageBytesLength);
             expect(width, expectedCroppedWidth);
             expect(height, expectedCroppedHeight);
           },
@@ -421,7 +394,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.circle;
-      const expectedLength = 10625;
+      const expectedImageBytesLength = 10625;
 
       const expectedCroppedWidth = 100;
       const expectedCroppedHeight = 200;
@@ -431,10 +404,7 @@ void main() {
           image: image,
           controller: cropController,
           onResult: (image, width, height) {
-            expect(
-              image.length,
-              inInclusiveRange(expectedLength - 5, expectedLength + 5),
-            );
+            expect(image.length, expectedImageBytesLength);
             expect(width, expectedCroppedWidth);
             expect(height, expectedCroppedHeight);
           },
@@ -464,7 +434,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.circle;
-      const expectedLength = 23278;
+      const expectedImageBytesLength = 23278;
 
       const expectedCroppedWidth = 200;
       const expectedCroppedHeight = 200;
@@ -474,10 +444,7 @@ void main() {
           image: image,
           controller: cropController,
           onResult: (image, width, height) {
-            expect(
-              image.length,
-              inInclusiveRange(expectedLength - 5, expectedLength + 5),
-            );
+            expect(image.length, expectedImageBytesLength);
             expect(width, expectedCroppedWidth);
             expect(height, expectedCroppedHeight);
           },
@@ -507,7 +474,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.circle;
-      const expectedLength = 18087;
+      const expectedImageBytesLength = 18087;
 
       const expectedCroppedWidth = 200;
       const expectedCroppedHeight = 100;
@@ -517,10 +484,7 @@ void main() {
           image: image,
           controller: cropController,
           onResult: (image, width, height) {
-            expect(
-              image.length,
-              inInclusiveRange(expectedLength - 5, expectedLength + 5),
-            );
+            expect(image.length, expectedImageBytesLength);
             expect(width, expectedCroppedWidth);
             expect(height, expectedCroppedHeight);
           },
@@ -550,7 +514,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.circle;
-      const expectedLength = 11446;
+      const expectedImageBytesLength = 11446;
 
       const expectedCroppedWidth = 200;
       const expectedCroppedHeight = 100;
@@ -560,10 +524,7 @@ void main() {
           image: image,
           controller: cropController,
           onResult: (image, width, height) {
-            expect(
-              image.length,
-              inInclusiveRange(expectedLength - 5, expectedLength + 5),
-            );
+            expect(image.length, expectedImageBytesLength);
             expect(width, expectedCroppedWidth);
             expect(height, expectedCroppedHeight);
           },
@@ -593,7 +554,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.circle;
-      const expectedLength = 42734;
+      const expectedImageBytesLength = 42734;
 
       const expectedCroppedWidth = 200;
       const expectedCroppedHeight = 200;
@@ -603,10 +564,7 @@ void main() {
           image: image,
           controller: cropController,
           onResult: (image, width, height) {
-            expect(
-              image.length,
-              inInclusiveRange(expectedLength - 5, expectedLength + 5),
-            );
+            expect(image.length, expectedImageBytesLength);
             expect(width, expectedCroppedWidth);
             expect(height, expectedCroppedHeight);
           },
@@ -636,7 +594,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.circle;
-      const expectedLength = 16457;
+      const expectedImageBytesLength = 16457;
 
       const expectedCroppedWidth = 100;
       const expectedCroppedHeight = 200;
@@ -646,10 +604,7 @@ void main() {
           image: image,
           controller: cropController,
           onResult: (image, width, height) {
-            expect(
-              image.length,
-              inInclusiveRange(expectedLength - 5, expectedLength + 5),
-            );
+            expect(image.length, expectedImageBytesLength);
             expect(width, expectedCroppedWidth);
             expect(height, expectedCroppedHeight);
           },
@@ -679,7 +634,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.circle;
-      const expectedLength = 32771;
+      const expectedImageBytesLength = 32771;
 
       const expectedCroppedWidth = 200;
       const expectedCroppedHeight = 200;
@@ -689,10 +644,7 @@ void main() {
           image: image,
           controller: cropController,
           onResult: (image, width, height) {
-            expect(
-              image.length,
-              inInclusiveRange(expectedLength - 5, expectedLength + 5),
-            );
+            expect(image.length, expectedImageBytesLength);
             expect(width, expectedCroppedWidth);
             expect(height, expectedCroppedHeight);
           },
@@ -724,7 +676,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.triangle;
-      const expectedLength = 25774;
+      const expectedImageBytesLength = 25774;
 
       const expectedCroppedWidth = 200;
       const expectedCroppedHeight = 200;
@@ -734,10 +686,7 @@ void main() {
           image: image,
           controller: cropController,
           onResult: (image, width, height) {
-            expect(
-              image.length,
-              inInclusiveRange(expectedLength - 5, expectedLength + 5),
-            );
+            expect(image.length, expectedImageBytesLength);
             expect(width, expectedCroppedWidth);
             expect(height, expectedCroppedHeight);
           },
@@ -767,7 +716,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.triangle;
-      const expectedLength = 6636;
+      const expectedImageBytesLength = 6636;
 
       const expectedCroppedWidth = 100;
       const expectedCroppedHeight = 200;
@@ -777,10 +726,7 @@ void main() {
           image: image,
           controller: cropController,
           onResult: (image, width, height) {
-            expect(
-              image.length,
-              inInclusiveRange(expectedLength - 5, expectedLength + 5),
-            );
+            expect(image.length, expectedImageBytesLength);
             expect(width, expectedCroppedWidth);
             expect(height, expectedCroppedHeight);
           },
@@ -810,7 +756,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.triangle;
-      const expectedLength = 13884;
+      const expectedImageBytesLength = 13884;
 
       const expectedCroppedWidth = 200;
       const expectedCroppedHeight = 200;
@@ -820,10 +766,7 @@ void main() {
           image: image,
           controller: cropController,
           onResult: (image, width, height) {
-            expect(
-              image.length,
-              inInclusiveRange(expectedLength - 5, expectedLength + 5),
-            );
+            expect(image.length, expectedImageBytesLength);
             expect(width, expectedCroppedWidth);
             expect(height, expectedCroppedHeight);
           },
@@ -853,7 +796,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.triangle;
-      const expectedLength = 12460;
+      const expectedImageBytesLength = 12460;
 
       const expectedCroppedWidth = 200;
       const expectedCroppedHeight = 100;
@@ -863,10 +806,7 @@ void main() {
           image: image,
           controller: cropController,
           onResult: (image, width, height) {
-            expect(
-              image.length,
-              inInclusiveRange(expectedLength - 5, expectedLength + 5),
-            );
+            expect(image.length, expectedImageBytesLength);
             expect(width, expectedCroppedWidth);
             expect(height, expectedCroppedHeight);
           },
@@ -896,7 +836,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.triangle;
-      const expectedLength = 7524;
+      const expectedImageBytesLength = 7524;
 
       const expectedCroppedWidth = 200;
       const expectedCroppedHeight = 100;
@@ -906,10 +846,7 @@ void main() {
           image: image,
           controller: cropController,
           onResult: (image, width, height) {
-            expect(
-              image.length,
-              inInclusiveRange(expectedLength - 5, expectedLength + 5),
-            );
+            expect(image.length, expectedImageBytesLength);
             expect(width, expectedCroppedWidth);
             expect(height, expectedCroppedHeight);
           },
@@ -939,7 +876,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.triangle;
-      const expectedLength = 33726;
+      const expectedImageBytesLength = 33726;
 
       const expectedCroppedWidth = 200;
       const expectedCroppedHeight = 200;
@@ -949,10 +886,7 @@ void main() {
           image: image,
           controller: cropController,
           onResult: (image, width, height) {
-            expect(
-              image.length,
-              inInclusiveRange(expectedLength - 5, expectedLength + 5),
-            );
+            expect(image.length, expectedImageBytesLength);
             expect(width, expectedCroppedWidth);
             expect(height, expectedCroppedHeight);
           },
@@ -982,7 +916,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.triangle;
-      const expectedLength = 13323;
+      const expectedImageBytesLength = 13323;
 
       const expectedCroppedWidth = 100;
       const expectedCroppedHeight = 200;
@@ -992,10 +926,7 @@ void main() {
           image: image,
           controller: cropController,
           onResult: (image, width, height) {
-            expect(
-              image.length,
-              inInclusiveRange(expectedLength - 5, expectedLength + 5),
-            );
+            expect(image.length, expectedImageBytesLength);
             expect(width, expectedCroppedWidth);
             expect(height, expectedCroppedHeight);
           },
@@ -1025,7 +956,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.triangle;
-      const expectedLength = 25054;
+      const expectedImageBytesLength = 25054;
 
       const expectedCroppedWidth = 200;
       const expectedCroppedHeight = 200;
@@ -1035,10 +966,7 @@ void main() {
           image: image,
           controller: cropController,
           onResult: (image, width, height) {
-            expect(
-              image.length,
-              inInclusiveRange(expectedLength - 5, expectedLength + 5),
-            );
+            expect(image.length, expectedImageBytesLength);
             expect(width, expectedCroppedWidth);
             expect(height, expectedCroppedHeight);
           },

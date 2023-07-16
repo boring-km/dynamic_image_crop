@@ -1,8 +1,3 @@
-## 0.0.8
-
-* Update README.md
-* add changeImageFile() method to CropController
-
 ## 0.0.7
 
 * Change example Widget stack to Column

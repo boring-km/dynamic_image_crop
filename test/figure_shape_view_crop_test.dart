@@ -19,6 +19,7 @@ void main() {
   const expectedCroppedHeight = 100;
 
   group('FigureShapeView Crop test on horizontal image', () {
+
     const defaultPhysicalSize = Size(1920, 880); // sample image size
 
     setUp(() {
@@ -33,19 +34,16 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.circle;
-      const expectedLength = 4906;
+      const expectedImageBytesLength = 4906;
 
       final testWidget = MaterialApp(
         home: DynamicImageCrop(
           image: image,
           controller: cropController,
           onResult: (image, width, height) {
+            expect(image.length, expectedImageBytesLength);
             expect(width, expectedCroppedWidth);
             expect(height, expectedCroppedHeight);
-            expect(
-              image.length,
-              inInclusiveRange(expectedLength - 5, expectedLength + 5),
-            );
           },
         ),
       );
@@ -66,19 +64,16 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.triangle;
-      const expectedLength = 3645;
+      const expectedImageBytesLength = 3645;
 
       final testWidget = MaterialApp(
         home: DynamicImageCrop(
           image: image,
           controller: cropController,
           onResult: (image, width, height) {
+            expect(image.length, expectedImageBytesLength);
             expect(width, expectedCroppedWidth);
             expect(height, expectedCroppedHeight);
-            expect(
-              image.length,
-              inInclusiveRange(expectedLength - 5, expectedLength + 5),
-            );
           },
         ),
       );
@@ -99,19 +94,16 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.rectangle;
-      const expectedLength = 5877;
+      const expectedImageBytesLength = 5877;
 
       final testWidget = MaterialApp(
         home: DynamicImageCrop(
           image: image,
           controller: cropController,
           onResult: (image, width, height) {
+            expect(image.length, expectedImageBytesLength);
             expect(width, expectedCroppedWidth);
             expect(height, expectedCroppedHeight);
-            expect(
-              image.length,
-              inInclusiveRange(expectedLength - 5, expectedLength + 5),
-            );
           },
         ),
       );
@@ -128,6 +120,7 @@ void main() {
   });
 
   group('FigureShapeView Crop test on vertical image', () {
+
     const defaultPhysicalSize = Size(920, 1143); // sample image size
 
     setUp(() {
@@ -142,19 +135,16 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.circle;
-      const expectedLength = 1999;
+      const expectedImageBytesLength = 1999;
 
       final testWidget = MaterialApp(
         home: DynamicImageCrop(
           image: image,
           controller: cropController,
           onResult: (image, width, height) {
+            expect(image.length, expectedImageBytesLength);
             expect(width, expectedCroppedWidth);
             expect(height, expectedCroppedHeight);
-            expect(
-              image.length,
-              inInclusiveRange(expectedLength - 5, expectedLength + 5),
-            );
           },
         ),
       );
@@ -175,19 +165,16 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.triangle;
-      const expectedLength = 1384;
+      const expectedImageBytesLength = 1384;
 
       final testWidget = MaterialApp(
         home: DynamicImageCrop(
           image: image,
           controller: cropController,
           onResult: (image, width, height) {
+            expect(image.length, expectedImageBytesLength);
             expect(width, expectedCroppedWidth);
             expect(height, expectedCroppedHeight);
-            expect(
-              image.length,
-              inInclusiveRange(expectedLength - 5, expectedLength + 5),
-            );
           },
         ),
       );
@@ -208,19 +195,16 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.rectangle;
-      const expectedLength = 733;
+      const expectedImageBytesLength = 733;
 
       final testWidget = MaterialApp(
         home: DynamicImageCrop(
           image: image,
           controller: cropController,
           onResult: (image, width, height) {
+            expect(image.length, expectedImageBytesLength);
             expect(width, expectedCroppedWidth);
             expect(height, expectedCroppedHeight);
-            expect(
-              image.length,
-              inInclusiveRange(expectedLength - 5, expectedLength + 5),
-            );
           },
         ),
       );
@@ -245,7 +229,7 @@ void main() {
     tester.view.devicePixelRatio = 1;
 
     cropController.cropTypeNotifier.value = CropType.rectangle;
-    const expectedLength = 49393;
+    const expectedImageBytesLength = 49393;
     const expectedCroppedWidth = 220;
     const expectedCroppedHeight = 220;
 
@@ -254,12 +238,9 @@ void main() {
         image: image,
         controller: cropController,
         onResult: (image, width, height) {
+          expect(image.length, expectedImageBytesLength);
           expect(width, expectedCroppedWidth);
           expect(height, expectedCroppedHeight);
-          expect(
-            image.length,
-            inInclusiveRange(expectedLength - 5, expectedLength + 5),
-          );
         },
       ),
     );
@@ -283,7 +264,7 @@ void main() {
     tester.view.devicePixelRatio = 1;
 
     cropController.cropTypeNotifier.value = CropType.rectangle;
-    const expectedLength = 3005;
+    const expectedImageBytesLength = 3005;
     const expectedCroppedWidth = 230;
     const expectedCroppedHeight = 230;
 
@@ -292,12 +273,9 @@ void main() {
         image: image,
         controller: cropController,
         onResult: (image, width, height) {
+          expect(image.length, expectedImageBytesLength);
           expect(width, expectedCroppedWidth);
           expect(height, expectedCroppedHeight);
-          expect(
-            image.length,
-            inInclusiveRange(expectedLength - 5, expectedLength + 5),
-          );
         },
       ),
     );
