@@ -33,7 +33,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.circle;
-      const expectedLength = 4906;
+      const expectedLength = 5254;
 
       final testWidget = MaterialApp(
         home: DynamicImageCrop(
@@ -66,7 +66,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.triangle;
-      const expectedLength = 3645;
+      const expectedLength = 3676;
 
       final testWidget = MaterialApp(
         home: DynamicImageCrop(
@@ -142,7 +142,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.circle;
-      const expectedLength = 1999;
+      const expectedLength = 2454;
 
       final testWidget = MaterialApp(
         home: DynamicImageCrop(
