@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'dart:ui';
 
 import 'package:dynamic_image_crop/src/controller/crop_controller.dart';
 import 'package:dynamic_image_crop/src/crop/crop_type.dart';
@@ -378,7 +379,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.circle;
-      const expectedLength = 35273;
+      const expectedLength = 35953;
 
       const expectedCroppedWidth = 200;
       const expectedCroppedHeight = 200;
@@ -387,6 +388,7 @@ void main() {
         home: DynamicImageCrop(
           image: image,
           controller: cropController,
+          imageByteFormat: ImageByteFormat.png,
           onResult: (image, width, height) {
             expect(
               image.length,
@@ -421,7 +423,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.circle;
-      const expectedLength = 10625;
+      const expectedLength = 11178;
 
       const expectedCroppedWidth = 100;
       const expectedCroppedHeight = 200;
@@ -464,7 +466,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.circle;
-      const expectedLength = 23278;
+      const expectedLength = 24064;
 
       const expectedCroppedWidth = 200;
       const expectedCroppedHeight = 200;
@@ -507,7 +509,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.circle;
-      const expectedLength = 18087;
+      const expectedLength = 18320;
 
       const expectedCroppedWidth = 200;
       const expectedCroppedHeight = 100;
@@ -550,7 +552,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.circle;
-      const expectedLength = 11446;
+      const expectedLength = 11909;
 
       const expectedCroppedWidth = 200;
       const expectedCroppedHeight = 100;
@@ -593,7 +595,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.circle;
-      const expectedLength = 42734;
+      const expectedLength = 43266;
 
       const expectedCroppedWidth = 200;
       const expectedCroppedHeight = 200;
@@ -636,7 +638,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.circle;
-      const expectedLength = 16457;
+      const expectedLength = 16801;
 
       const expectedCroppedWidth = 100;
       const expectedCroppedHeight = 200;
@@ -679,7 +681,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.circle;
-      const expectedLength = 32771;
+      const expectedLength = 33387;
 
       const expectedCroppedWidth = 200;
       const expectedCroppedHeight = 200;
@@ -724,7 +726,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.triangle;
-      const expectedLength = 25774;
+      const expectedLength = 25670;
 
       const expectedCroppedWidth = 200;
       const expectedCroppedHeight = 200;
@@ -767,7 +769,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.triangle;
-      const expectedLength = 6636;
+      const expectedLength = 6561;
 
       const expectedCroppedWidth = 100;
       const expectedCroppedHeight = 200;
@@ -810,7 +812,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.triangle;
-      const expectedLength = 13884;
+      const expectedLength = 13903;
 
       const expectedCroppedWidth = 200;
       const expectedCroppedHeight = 200;
@@ -853,7 +855,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.triangle;
-      const expectedLength = 12460;
+      const expectedLength = 12376;
 
       const expectedCroppedWidth = 200;
       const expectedCroppedHeight = 100;
@@ -896,7 +898,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.triangle;
-      const expectedLength = 7524;
+      const expectedLength = 7465;
 
       const expectedCroppedWidth = 200;
       const expectedCroppedHeight = 100;
@@ -939,7 +941,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.triangle;
-      const expectedLength = 33726;
+      const expectedLength = 33739;
 
       const expectedCroppedWidth = 200;
       const expectedCroppedHeight = 200;
@@ -982,7 +984,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.triangle;
-      const expectedLength = 13323;
+      const expectedLength = 13277;
 
       const expectedCroppedWidth = 100;
       const expectedCroppedHeight = 200;
@@ -1025,7 +1027,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       cropController.cropTypeNotifier.value = CropType.triangle;
-      const expectedLength = 25054;
+      const expectedLength = 25067;
 
       const expectedCroppedWidth = 200;
       const expectedCroppedHeight = 200;
