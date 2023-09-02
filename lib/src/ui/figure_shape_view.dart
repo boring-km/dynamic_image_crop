@@ -49,7 +49,6 @@ class FigureShapeViewState extends State<FigureShapeView> {
 
   @override
   Widget build(BuildContext context) {
-
     if (widget.painterWidth == double.infinity) return Container();
 
     if (!positionInitialized) {
@@ -100,7 +99,8 @@ class FigureShapeViewState extends State<FigureShapeView> {
                     ),
                     child: Container(),
                   );
-                } else {  // triangle
+                } else {
+                  // triangle
                   return CustomPaint(
                     painter: TrianglePainter(
                       Rect.fromLTWH(

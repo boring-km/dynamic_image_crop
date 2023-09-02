@@ -50,6 +50,7 @@ class CirclePainterForCrop extends CustomPainter {
   }
 
   // coverage:ignore-start
-  @override bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
   // coverage:ignore-end
 }
